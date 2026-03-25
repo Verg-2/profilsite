@@ -1,0 +1,13 @@
+# Editör ayarları
+.idea/
+.vscode/
+
+# Vue/Node.js gereksizleri
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db

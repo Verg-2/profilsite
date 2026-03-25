@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!-- HTML5 belgesi olduğunu tarayıcıya bildirir -->
+<html lang="tr">
+<!-- lang="tr": Sayfanın dili Türkçe. Arama motorları ve ekran okuyucular için önemli -->
+<head>
+  <!-- head: Sayfanın görünmeyen ayarları (meta bilgiler, stil dosyaları, fontlar) -->
+  <meta charset="UTF-8"> <!-- Türkçe karakter desteği (ö,ü,ş,ğ,ı,ç) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobilde düzgün görünmesi için -->
+  <title>Blog | Kadir</title> <!-- Tarayıcı sekmesindeki başlık -->
+  <link rel="stylesheet" href="css/style.css"> <!-- Ana CSS dosyasını bağla -->
+  
+  <!-- Google Fonts bağlantısı: preconnect ile sunucuya önceden bağlanarak hız kazanılır -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       BLOG SAYFASI ÖZEL STİLLERİ
+       
+       :root içinde CSS değişkenleri tanımlıyoruz.
+       var(--değişken-adi) ile her yerde kullanabiliriz.
+       Böylece renkleri değiştirmek istediğimizde
+       tek bir yerden değiştirmek yeterli olur.
+       ============================================ */
+    :root {
+      --bg-primary: #0B0B0F;        /* Ana arka plan rengi (çok koyu) */
+      --bg-card: #11111A;           /* Kart arka plan rengi (biraz daha açık koyu) */
+      --accent-primary: #FF3B1D;    /* Birincil vurgu rengi (ateş kırmızısı) */
+      --accent-secondary: #FFB000;  /* İkincil vurgu rengi (altın turuncu) */
+      --text-primary: #F4F6FF;      /* Ana yazı rengi (beyaza yakın) */
+      --text-muted: #8B8B9A;        /* Soluk yazı rengi (gri tonu, ikincil metinler için) */
+      --border: rgba(255, 255, 255, 0.08); /* Kenarlık rengi (çok hafif beyaz, neredeyse görünmez) */
+    }
+
+    body {
+      background: var(--bg-primary); /* Arka plan rengini CSS değişkeninden al */
+      color: var(--text-primary);    /* Yazı rengini CSS değişkeninden al */
+      font-family: 'Inter', sans-serif; /* Yazı tipi: önce Inter, yoksa sans-serif kullan */
+    }
+
+    /* ===== SAYFA BAŞLIĞI (Page Header) =====
+       padding: iç boşluk (içerik ile kenarlık arasındaki mesafe).
+       140px üst = navbar için yer bırakır (çünkü navbar fixed/sabit pozisyonda).
+       position: relative = ::before pseudo-element için referans noktası oluşturur.
+       overflow: hidden = taşan içeriği gizler, gradient'in dışarı taşmasını engeller.
+    */
+    .page-header {
+      padding: 140px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at 30% 20%, rgba(255, 59, 29, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(255, 176, 0, 0.08) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .page-header h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      /* Giriş animasyonu: aşağıdan yukarı kayarak belirir */
+      animation: headerFadeIn 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+      position: relative;
+      /* Giriş animasyonu: h1'den 0.2 saniye sonra başlar */
+      animation: headerFadeIn 0.8s ease 0.2s forwards;
+      opacity: 0;
+    }
+
+    /* Sayfa başlığı giriş animasyonu */
+    @keyframes headerFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== BLOG GRID YAPILANDIRMASI =====
+       CSS Grid: Elemanları satır ve sütunlara düzgünce yerleştiren modern layout sistemi.
+       max-width: Sayfanın çok geniş ekranlarda yayılmasını engeller.
+       margin: 0 auto = yatayda ortalar (sol ve sağ otomatik).
+    */
+    .blog-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* 
+       grid-template-columns: Grid'in sütun yapısını belirler.
+       repeat(auto-fit, minmax(340px, 1fr)) demek:
+       - "Minimum 340px genişlikte sütunlar oluştur"
+       - "Kaç sütun sığıyorsa o kadar koy"
+       - "Kalan boşluğu eşit dağıt (1fr)"
+       Bu sayede ekran küçüldükçe sütun sayısı otomatik azalır (responsive).
+       gap: Kartlar arasındaki boşluk.
+    */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    /* ===== BLOG KARTI =====
+       Her blog yazısı bir "kart" içinde gösterilir.
+       border-radius: Köşeleri yuvarlatır (20px oldukça yuvarlak).
+       transition: Hover efektinin yumuşak olmasını sağlar.
+       cubic-bezier: Özel hız eğrisi - başta yavaş, ortada hızlı, sonda yavaş.
+    */
+    .blog-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;          /* Taşan içerik gizlenir (köşe yuvarlamaları için önemli) */
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;        /* ::before pseudo-element için referans */
+    }
+
+    /* 
+       ::before pseudo-element: HTML'de olmayan ama CSS ile oluşturulan sanal eleman.
+       Kartın üstünde 3px'lik gradient çizgi oluşturur.
+       transform: scaleX(0) = Başlangıçta yatayda sıfıra küçültülmüş (görünmez).
+       Hover durumunda scaleX(1) olarak tam boyutuna geçer.
+    */
+    .blog-card::before {
+      content: '';                /* Boş içerik (pseudo-element için zorunlu) */
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      transform: scaleX(0);      /* Başlangıçta gizli */
+      transition: transform 0.4s ease;
+    }
+
+    /* 
+       :hover = Fare kartın üzerine geldiğinde aktif olan stiller.
+       translateY(-8px) = Kartı 8px yukarı kaydırır (havada durma efekti).
+       box-shadow: Kartın altına gölge ekler (derinlik hissi).
+    */
+    .blog-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 59, 29, 0.3);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Hover'da üst çizgiyi görünür yap */
+    .blog-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    /* 
+       Blog resim alanı: İçinde emoji gösterilir.
+       display: flex + align-items/justify-content: center = içeriği tam ortalar.
+       ::after ile alt kısma gradient karanlık efekti eklenir.
+    */
+    .blog-image {
+      height: 180px;
+      display: flex;
+      align-items: center;       /* Dikey ortalama */
+      justify-content: center;   /* Yatay ortalama */
+      font-size: 3.5rem;         /* Emoji boyutu */
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Resim alanının altına gradient karanlık efekti */
+    .blog-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;                  /* top:0, right:0, bottom:0, left:0 kısayolu */
+      background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.3) 100%);
+    }
+
+    /* Blog kart içerik alanı */
+    .blog-content {
+      padding: 24px;             /* İç boşluk */
+    }
+
+    /* Tarih gösterimi: Solda kırmızı nokta + turuncu tarih metni */
+    .blog-date {
+      font-size: 0.8rem;
+      color: var(--accent-secondary);
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;             /* Yatay hizalama için flexbox kullan */
+      align-items: center;       /* Dikeyde ortala */
+      gap: 8px;                  /* Elemanlar arası boşluk */
+    }
+
+    /* Tarih öncesindeki kırmızı nokta */
+    .blog-date::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent-primary);
+      border-radius: 50%;        /* Tam yuvarlak yapar (daire) */
+    }
+
+    /* Blog başlığı */
+    .blog-title {
+      font-size: 1.25rem;
+      font-weight: 700;          /* Kalın yazı */
+      margin-bottom: 12px;
+      line-height: 1.4;          /* Satır yüksekliği (okunabilirlik için) */
+    }
+
+    /* Blog özet metni */
+    .blog-excerpt {
+      font-size: 0.95rem;
+      color: var(--text-muted);  /* Soluk renk - ikincil metin */
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    /* 
+       "Devamını Oku" linki.
+       inline-flex: Satır içinde flex kullanımı (ikon + metin yan yana).
+       gap: İkon ile metin arasındaki boşluk.
+       Hover'da gap artar = ok sağa kayar efekti.
+    */
+    .blog-read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: gap 0.3s ease;   /* Sadece gap değişimini anime et */
+    }
+
+    .blog-read-more:hover {
+      gap: 12px;                   /* Hover'da ok sağa kayar */
+      color: var(--accent-secondary);
+    }
+
+    /* ===== NAVİGASYON BARI =====
+       position: fixed = Sayfa kaydırılırken bile en üstte sabit kalır.
+       z-index: 1000 = Diğer elemanların üstünde görünür (yüksek sayı = önde).
+       backdrop-filter: blur = Arkasındaki içeriği bulanıklaştırır (buzlu cam efekti).
+       rgba(11,11,15, 0.9) = %90 opak siyah arka plan.
+    */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      z-index: 1000;
+      background: rgba(11, 11, 15, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ===== NAVİGASYON İÇ DÜZEN =====
+       Flex ile logo sola, linkler sağa hizalanır.
+       justify-content: space-between = Araya boşluk koy (iki uca yapıştır).
+    */
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: 1200px;
+      margin: 0 auto;            /* Yatayda ortala */
+      padding: 0 24px;
+    }
+
+    /* Logo: Gradient metin efekti.
+       background-clip: text = Gradient'i sadece yazının içinde gösterir.
+       -webkit-text-fill-color: transparent = Yazının kendi rengini şeffaf yapar ki gradient görünsün.
+    */
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    /* Navigasyon linkleri: Yatayda sıralı liste */
+    .nav-links {
+      display: flex;             /* Elemanları yatay diz */
+      gap: 32px;                 /* Linkler arası boşluk */
+      list-style: none;          /* Liste işaretlerini kaldır (noktalar) */
+    }
+
+    /* Link stilleri: Hover'da alt çizgi animasyonu */
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    /* 
+       Link alt çizgi efekti:
+       ::after ile linkin altına 2px'lik gradient çizgi eklenir.
+       Başlangıçta width: 0 (görünmez).
+       Hover'da width: 100% (tam genişlik) olur.
+    */
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-primary);
+      transition: width 0.3s ease;
+    }
+
+    /* Hover ve aktif link durumu: Beyaz renk + alt çizgi görünür */
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text-primary);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+    /* @keyframes pulse: Animasyonun kare kare tanımı.
+       0% ve 100% = Başlangıç ve bitiş (scale(1) = normal boyut).
+       50% = Orta nokta (scale(1.1) = %10 büyütme).
+       Bu, kalbin sürekli nabız atmasını sağlar.
+    */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* ===== CANVAS (Partikül Animasyonu için) =====
+       position: fixed = Sayfa kaydırıldığında bile tamamen arka planda sabit kalır.
+       pointer-events: none = Canvas'a tıklama yapılamaz, alttaki butonlara ulaşılabilir.
+       z-index: 0 = Diğer elemanların arkasında kalır.
+    */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== RESPONSIVE TASARIM =====
+       @media (max-width: 768px): Ekran genişliği 768px'den küçükse.
+       Tablet ve mobil cihazlarda farklı görünüm sağlar.
+       Nav linkleri gizlenir (hamburger menü eklenebilir).
+       Blog grid tek sütun olur.
+    */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;           /* Mobilde navigasyonu gizle */
+      }
+      
+      .blog-grid {
+        grid-template-columns: 1fr; /* Tek sütun düzeni */
+      }
+    }
+
+    /* ===== FADE-IN ANİMASYONU =====
+       Elemanlar başlangıçta görünmez ve 30px aşağıda.
+       JavaScript (IntersectionObserver) elemanı ekranda gördüğünde
+       .visible sınıfı ekler, böylece eleman yukarı kayarak belirir.
+    */
+    .fade-in {
+      opacity: 0;                /* Başlangıçta görünmez */
+      transform: translateY(30px); /* 30px aşağıda başla */
+      transition: all 0.6s ease;  /* 0.6 saniyede yumuşak geçiş */
+    }
+
+    /* IntersectionObserver .visible ekleyince bu stiller aktif olur */
+    .fade-in.visible {
+      opacity: 1;                /* Görünür yap */
+      transform: translateY(0);  /* Normal yerine taşı */
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+    Canvas Elemanı: JavaScript ile arka plan partikül animasyonu çizilir.
+    animations.js dosyası bu canvas'u bulup üzerine ateş benzeri parçacıklar çizer.
+  -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ===== NAVİGASYON (Gezinti Çubuğu) ===== -->
+  <!-- 
+    <nav> etiketi: Semantik HTML - sayfadaki navigasyon bölümünü tanımlar.
+    Sayfanın üstünde sabit durur (position: fixed) ve her zaman görünürdür.
+  -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <!-- Logo: Tıklayınca anasayfaya gider -->
+      <a href="index.html" class="logo">Kadir</a>
+      <!-- Sayfa bağlantıları listesi -->
+      <ul class="nav-links">
+        <li><a href="index.html">Anasayfa</a></li>
+        <li><a href="hakkinda.html">Hakkında</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="yetenekler.html">Yetenekler</a></li>
+        <li><a href="projects.html">Projeler</a></li>
+        <li><a href="contact.html">İletişim</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== SAYFA BAŞLIĞI ===== -->
+  <!-- 
+    <header> etiketi: Sayfanın başlık bölümünü tanımlar.
+    h1: Sayfanın ana başlığı (her sayfada tek bir h1 olmalı).
+    p: Kısa açıklama metni.
+    CSS animasyonu ile sayfa açıldığında yukarı kayarak belirir.
+  -->
+  <header class="page-header">
+    <h1>Blog Yazılarım</h1>
+    <p>Web geliştirme, tasarım ve teknoloji hakkında düşüncelerim ve deneyimlerim.</p>
+  </header>
+
+  <!-- ===== BLOG YAZILARI ===== -->
+  <!-- 
+    <main> etiketi: Sayfanın ana içeriği burada.
+    <article> etiketi: Her bir blog yazısı bağımsız bir makale.
+    fade-in sınıfı: Başlangıçta görünmez, scroll ile ekranda görününce animasyonla belirir.
+  -->
+  <main class="blog-container">
+    <div class="blog-grid">
+      <article class="blog-card fade-in">
+        <div class="blog-image">💻</div>
+        <div class="blog-content">
+          <div class="blog-date">15 Ocak 2024</div>
+          <h2 class="blog-title">Modern Web Geliştirme Trendleri</h2>
+          <p class="blog-excerpt">
+            2024'te web geliştirme dünyasında neler oluyor? 
+            Yeni framework'ler, performans optimizasyonları...
+          </p>
+          <a href="#" class="blog-read-more">Devamını Oku →</a>
+        </div>
+      </article>
+
+      <article class="blog-card fade-in">
+        <div class="blog-image">🎨</div>
+        <div class="blog-content">
+          <div class="blog-date">10 Ocak 2024</div>
+          <h2 class="blog-title">CSS Animasyonları İpuçları</h2>
+          <p class="blog-excerpt">
+            CSS ile profesyonel animasyonlar nasıl yapılır? 
+            Performanslı ve göz alıcı efektler...
+          </p>
+          <a href="#" class="blog-read-more">Devamını Oku →</a>
+        </div>
+      </article>
+
+      <article class="blog-card fade-in">
+        <div class="blog-image">🚀</div>
+        <div class="blog-content">
+          <div class="blog-date">5 Ocak 2024</div>
+          <h2 class="blog-title">JavaScript Performans İpuçları</h2>
+          <p class="blog-excerpt">
+            JavaScript kodlarınızı nasıl daha hızlı yaparsınız? 
+            Debounce, throttle teknikleri...
+          </p>
+          <a href="#" class="blog-read-more">Devamını Oku →</a>
+        </div>
+      </article>
+
+      <article class="blog-card fade-in">
+        <div class="blog-image">🔧</div>
+        <div class="blog-content">
+          <div class="blog-date">28 Aralık 2023</div>
+          <h2 class="blog-title">Vue.js ile Başlangıç</h2>
+          <p class="blog-excerpt">
+            Vue.js öğrenmek isteyenler için başlangıç rehberi. 
+            Temel kavramlar ve örnek kodlar...
+          </p>
+          <a href="#" class="blog-read-more">Devamını Oku →</a>
+        </div>
+      </article>
+
+      <article class="blog-card fade-in">
+        <div class="blog-image">📱</div>
+        <div class="blog-content">
+          <div class="blog-date">20 Aralık 2023</div>
+          <h2 class="blog-title">Responsive Tasarım İlkeleri</h2>
+          <p class="blog-excerpt">
+            Her cihazda güzel görünen web siteleri nasıl yapılır? 
+            Mobile-first yaklaşım...
+          </p>
+          <a href="#" class="blog-read-more">Devamını Oku →</a>
+        </div>
+      </article>
+
+      <article class="blog-card fade-in">
+        <div class="blog-image">⚡</div>
+        <div class="blog-content">
+          <div class="blog-date">15 Aralık 2023</div>
+          <h2 class="blog-title">Web Performans Optimizasyonu</h2>
+          <p class="blog-excerpt">
+            Web sitenizi hızlandırmak için yapmanız gerekenler. 
+            Lazy loading, caching...
+          </p>
+          <a href="#" class="blog-read-more">Devamını Oku →</a>
+        </div>
+      </article>
+    </div>
+  </main>
+  <!-- JavaScript - Vue.js Animasyon Sistemi (canvas, fade-in, navbar scroll işlemlerini yönetir) -->
+  <script src="js/animations.js"></script>
+</body>
+</html>
+

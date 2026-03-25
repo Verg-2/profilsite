@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!-- 
+  DOCTYPE html: Tarayıcıya bu belgenin HTML5 formatında olduğunu söyler.
+  Bu satır her HTML dosyasının en başında olmalıdır.
+-->
+<html lang="tr">
+<!-- 
+  <html> etiketi: Tüm HTML içeriğin kapsayıcısıdır.
+  lang="tr" : Sayfanın dilinin Türkçe olduğunu belirtir (SEO ve erişilebilirlik için önemli).
+-->
+<head>
+  <!-- 
+    <head> etiketi: Sayfanın "beyni". Burada sayfanın ayarları, bağlantıları ve üst bilgileri bulunur.
+    Kullanıcı bu kısmı görmez ama tarayıcı ve arama motorları okur.
+  -->
+
+  <!-- Karakter seti: Türkçe karakterlerin (ö, ü, ş, ğ, ı, ç) düzgün görünmesi için UTF-8 kullanılır -->
+  <meta charset="UTF-8">
+  
+  <!-- Viewport: Mobil cihazlarda sayfanın ekrana sığmasını sağlar (responsive için zorunlu) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- title: Tarayıcı sekmesinde görünen başlık -->
+  <title>Kadir | Frontend Developer</title>
+  
+  <!-- 
+    link rel="stylesheet": Dışarıdaki CSS dosyasını sayfaya bağlar.
+    CSS dosyası sayfanın görünümünü (renkler, boyutlar, yerleşim) kontrol eder.
+  -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- 
+    Vue.js CDN: Vue.js framework'ünü internetten yükler.
+    CDN (Content Delivery Network) = dosyayı kendi sunucumuzda tutmak yerine
+    başka bir sunucudan hızlıca yükleriz.
+    'prod.js' = production (son kullanıcı) sürümü, daha küçük ve hızlıdır.
+  -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  
+  <!-- 
+    Performans: preload ve preconnect ile kaynakları önceden yükle.
+    preload: "Bu dosyayı hemen yükle, çok yaklında lazım olacak" demek.
+    preconnect: "Bu sunucuya bağlanmaya hazırlan" demek (DNS + TLS el sıkışması).
+    Bu satırlar sayfanın daha hızlı yüklenmesini sağlar.
+  -->
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="preload" href="js/app.js" as="script">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- 
+    Google Fonts: 'Inter' yazı tipini Google'dan yüklüyoruz.
+    wght@400;500;600;700;800 = farklı kalınlıkları yükle (400=normal, 700=kalın, 800=çok kalın).
+    display=swap: Font yüklenene kadar sistem fontunu göster, sonra değiştir.
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- 
+    Vue App Container: Vue.js, id="app" olan bu div'in içindeki her şeyi kontrol eder.
+    Vue, bu container içindeki {{ değişken }} ifadelerini ve v-for gibi direktifleri işler.
+  -->
+  <div id="app">
+
+    <!-- ===== NAVİGASYON (Gezinti Çubuğu) ===== -->
+    <!-- 
+      <nav> etiketi: Sayfadaki navigasyon (gezinti) bölümünü tanımlar.
+      Semantik HTML: Anlam taşıyan etiketler kullanmak SEO ve erişilebilirlik için önemlidir.
+      .navbar sınıfı CSS'te stil verir (sabit pozisyon, bulanık arka plan vs.)
+    -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <!-- Logo: Tıklayınca hero bölümüne gider (href="#hero") -->
+        <a href="#hero" class="logo">Kadir</a>
+        
+        <!-- 
+          Navigasyon linkleri: Sırasız liste (<ul>) içinde liste öğeleri (<li>).
+          Her <a> etiketi farklı bir sayfaya yönlendirir.
+          href="sayfa.html" = tıklandığında gidilecek dosya yolu.
+        -->
+        <ul class="nav-links">
+          <li><a href="index.html">Anasayfa</a></li>
+          <li><a href="hakkinda.html">Hakkında</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="yetenekler.html">Yetenekler</a></li>
+          <li><a href="projects.html">Projeler</a></li>
+          <li><a href="contact.html">İletişim</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ===== HERO BÖLÜMÜ (Ana Karşılama Alanı) ===== -->
+    <!-- 
+      <section> etiketi: Sayfanın bir bölümünü tanımlar.
+      id="hero" : Bu bölüme sayfadan bağlantı vermek için kullanılır (#hero).
+      Hero = Sayfanın en üstündeki büyük karşılama alanı, ilk izlenimi oluşturur.
+    -->
+    <section class="hero" id="hero">
+      <!-- 
+        Canvas: JavaScript ile çizim yapmak için kullanılan HTML elemanı.
+        Burada ateş partikül animasyonu çizilecek (app.js tarafından yönetilir).
+        pointer-events: none sayesinde tıklama olaylarını engellemez.
+      -->
+      <canvas id="fire-canvas"></canvas>
+      
+      <div class="hero-content">
+        <!-- Sol taraf - Metin içeriği -->
+        <div class="hero-text">
+          <!-- Selamlama yazısı -->
+          <p class="greeting">Merhaba, ben</p>
+          
+          <!-- 
+            Ana başlık: <h1> sayfanın en önemli başlığıdır (SEO için çok önemli).
+            <span> ile "Kadir" kelimesine özel gradient renk uygulanır.
+            <br> = satır sonu (kırma), alt satıra geçiş.
+          -->
+          <h1 class="hero-title">
+            <span class="highlight">Kadir</span><br>
+            Backend Developer
+          </h1>
+          
+          <!-- Alt başlık: Kısa tanıtım metni -->
+          <p class="hero-subtitle">
+            Modern web uygulamalarının arkasında çalışan güçlü backend sistemleri geliştiriyorum. Temiz ve sürdürülebilir kod yazmaya, güvenli ve ölçeklenebilir mimariler oluşturmaya önem veriyorum. Amacım, kullanıcıların fark etmese bile sorunsuz çalışan hızlı ve güvenilir sistemler oluşturmak.
+          </p>
+          
+          <!-- 
+            Butonlar: <a> etiketi ile sayfa yönlendirmesi yapılır.
+            btn-primary = ana renkte dolgu buton (gradient arka plan).
+            btn-secondary = şeffaf, kenarlıklı buton.
+          -->
+          <div class="hero-buttons">
+            <a href="projects.html" class="btn btn-primary">
+              <span>Projelerim</span>
+            </a>
+            <a href="contact.html" class="btn btn-secondary">
+              <span>İletişim</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Sağ taraf - Profil görüntüsü -->
+        <div class="hero-image">
+          <!-- 
+            image-frame: Profil fotoğrafının çerçevesi, CSS ile 3D dönüş ve gölge efekti uygulanır.
+            profile-img: Gerçek fotoğraf, app.js ile mouse hareketine tepki verir (parallax).
+            image-glow: Fotoğrafın etrafındaki parıltı efekti, CSS animasyonu ile nabız atar.
+          -->
+          <div class="image-frame">
+            <img src="img/wolff.png" alt="Profil Fotoğrafı" class="profile-img" id="profile-img">
+            <div class="image-glow" id="image-glow"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<!-- 
+  JavaScript dosyasını sayfanın sonuna koymak önemli!
+  Çünkü JS dosyası HTML elemanlarına erişir (getElementById gibi).
+  Eğer <head>'e koyarsak, HTML henüz yüklenmediyse JS elemanları bulamaz.
+  Body'nin en sonuna koymak en güvenli yöntemdir.
+-->
+  <!-- Ana uygulama scripti - ateş canvas, mouse parallax, navbar scroll, fade-in animasyonlarını yönetir -->
+  <script src="js/app.js"></script>
+</body>
+</html>
+

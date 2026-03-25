@@ -1,0 +1,1112 @@
+/* ============================================
+   MODERN PROFİL SAYFASI - ANA STİLLER
+   Ateş Kırmızısı & Turuncu Tema
+   
+   Bu dosya tüm sayfalarda ortak kullanılan stilleri içerir.
+   Her sayfada <link rel="stylesheet" href="css/style.css"> ile yüklenir.
+   ============================================ */
+
+/* ===== RESET (SIFIRLAMA) =====
+   Tarayıcılar varsayılan margin/padding ekler.
+   * selçücüsü tüm elementleri seçer ve bunları sıfırlar.
+   
+   box-sizing: border-box → Çok önemli!
+   Normal: width = içerik (padding ve border dışında)
+   border-box: width = içerik + padding + border (toplam genişlik) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* smooth scrolling: Sayfa içi linklere (#bolum) tıklanınca
+   anında zıplamak yerine yumuşakça kayar. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== GENEL SAYFA STİLLERİ =====
+   font-family: Yazı tipi sırası (ilki yoksa sonrakini dener).
+   overflow-x: hidden → Yatay kaydırmayı engeller (taşan animasyonlar için).
+   line-height: 1.6 → Satır yüksekliği (okunabilirlik için). */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a0c;            /* Koyu arka plan */
+  color: #e5e5e5;                  /* Açık metin rengi */
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ===== CSS DEĞİŞKENLERİ (CUSTOM PROPERTIES) =====
+   :root → HTML elementinin kendisi (en üst kapsam).
+   --isim: değer; şeklinde tanımlanır.
+   var(--isim) ile her yerde kullanılır.
+   
+   AVANTAJI: Rengi değiştirmek istersen TEK YERDEN değiştirirsin.
+   Örneğin --primary'yi değiştirsen tüm butonlar, çizgiler, gölgeler değişir. */
+:root {
+  --primary: #ff4d00;        /* Ana renk: Ateş kırmızısı */
+  --primary-dark: #cc3d00;   /* Koyu versiyon */
+  --secondary: #ff6b35;      /* İkincil: Turuncu */
+  --accent: #ffa500;         /* Vurgu: Altın turuncu */
+  --accent-glow: #ff8c00;    /* Glow için koyu turuncu */
+  
+  --dark-bg: #0a0a0c;        /* Arka plan */
+  --card-bg: #141418;        /* Kart arka planı */
+  --border: #1f1f25;         /* Kenarlık rengi */
+  --text: #e5e5e5;           /* Ana metin */
+  --text-muted: #8b8b8b;     /* Soluk metin */
+  
+  /* Gölge renkleri: rgba ile saydamlık ayarlanır */
+  --fire-glow: rgba(255, 77, 0, 0.5);      /* Ateş parlaması */
+  --fire-glow-soft: rgba(255, 107, 53, 0.3); /* Yumuşak ateş */
+}
+
+/* ===== NAVİGASYON ÇUBUĞU =====
+   Sayfanın en üstünde sabit duran menü.
+   
+   position: fixed → Scroll yapsan da yerinde kalır.
+   z-index: 1000 → Her şeyin üstünde görünür.
+   backdrop-filter: blur → Arkasındaki içeriği bulanıklaştırır (buzlu cam efekti).
+   transition → Scroll'da arka plan değişirken yumuşak geçiş. */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(10, 10, 12, 0.9);  /* %90 opak = %10 saydam */
+  backdrop-filter: blur(20px);        /* Buzlu cam */
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  transition: all 0.3s ease;
+}
+
+/* Navbar iç kapsayıcı: Logo solda, linkler sağda.
+   space-between → Araya boşluk koyarak iki uca iter. */
+.navbar-container {
+  max-width: 1200px;                  /* Maksimum genişlik */
+  margin: 0 auto;                     /* Ortala */
+  display: flex;
+  justify-content: space-between;     /* İki uca dağıt */
+  align-items: center;                /* Dikey ortala */
+}
+
+/* Logo: Gradient renkli metin.
+   background-clip: text → Gradient'i yazının kendisine uygular.
+   -webkit-text-fill-color: transparent → Metin rengini kaldırıp gradient'ı gösterir. */
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  text-decoration: none;              /* Alt çizgi yok */
+}
+
+/* Menü linkleri: Yatay sıralı, madde işaretsiz.
+   gap: 2rem → Linkler arası 32px boşluk. */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;                   /* Madde işaretini kaldır */
+}
+
+/* Link stili: Soluk renkte, hover'da beyaz.
+   ::after ile altında genişleyen gradient çizgi. */
+.nav-links a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;                 /* ::after konumu için */
+  transition: color 0.3s ease;
+}
+
+/* Alt çizgi: Normalde width: 0 (görünmez).
+   Hover'da width: 100% ile görünür. */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;                           /* Başta gizli */
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #fff;                        /* Beyaz */
+}
+
+.nav-links a:hover::after {
+  width: 100%;                        /* Alt çizgi tam genişlik */
+}
+
+/* ===== HERO BÖLÜMÜ =====
+   Ana sayfanın ilk ekranı (tam ekran).
+   min-height: 100vh → Ekranın tamamını kaplar.
+   
+   radial-gradient → Dairesel geçiş (merkez parlak, kenarlara doğru kaybolur).
+   ellipse at 30% 20% → Elips şeklinde, sol üstte konumlanmış.
+   Bu gradient'ler sayfa arkasına yumuşak ateş ışığı verir. */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 6rem 2rem 4rem;
+  /* Ateşli gradient arka plan */
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(255, 77, 0, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(255, 140, 0, 0.08) 0%, transparent 40%),
+    var(--dark-bg);
+  overflow: hidden;
+}
+
+/* Ateş parçacık canvas: JS ile arka planda ateş animasyonu.
+   pointer-events: none → Fare tıklamalarını engellemez. */
+#fire-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-content {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text {
+  z-index: 2;
+}
+
+/* greeting: "MERHABA" gibi küçük üst yazı.
+   letter-spacing: 2px → Harfler arası boşluk (genişletir).
+   text-transform: uppercase → Tüm harfleri büyük yapar. */
+.greeting {
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Ana başlık: clamp() ile responsive boyut.
+   clamp(min, tercih, max) → Ekrana göre otomatik ayarlanır.
+   2.5rem minimum, 5vw tercih, 4rem maksimum. */
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;               /* Sıkı satır aralığı */
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+/* .highlight: Başlık içinde vurgulanan kısım (gradient metin). */
+.hero-title .highlight {
+  background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ===== BUTONLAR =====
+   .btn: Tüm butonların ortak stili.
+   .btn-primary: Gradient arka planlı, ateş gölgeli.
+   .btn-secondary: Şeffaf arka plan, kenarlıklı.
+   
+   inline-flex → İçeriğe göre boyut + içindekileri flex ile hizala.
+   gap: 0.5rem → İkon ve metin arası boşluk. */
+.btn {
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;                 /* Fare eli */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Birincil buton: Ateş gradient + gölge.
+   translateY(-3px) → Hover'da 3px yukarı kalkar. */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 25px var(--fire-glow);  /* Ateş gölgesi */
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);               /* Hover: Yukarı kaldır */
+  box-shadow: 0 8px 40px var(--fire-glow);   /* Daha büyük gölge */
+}
+
+/* İkincil buton: Şeffaf + ince kenarlık. */
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);    /* Kırmızı kenarlık */
+  color: #fff;
+  background: rgba(255, 77, 0, 0.1); /* Hafif kırmızı arka plan */
+}
+
+/* ===== PROFİL GÖRÜNTÜSÜ =====
+   Hero bölümündeki profil fotoğrafı alanı. */
+.hero-image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fotoğraf çerçevesi: 3D perspektif efektli.
+   perspective(1000px) → 3D derinlik hissi verir.
+   rotateY(-5deg) → Hafif sağa döndürülmüş.
+   aspect-ratio: 3/4 → En-boy oranı (portre formatı).
+   box-shadow → Çoklu gölge: Dış gölge + ateş glow + iç glow. */
+.image-frame {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 3/4;               /* Portre oranı */
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.25), rgba(255, 140, 0, 0.15));
+  border: 1px solid var(--border);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),     /* Dış gölge */
+    0 0 80px rgba(255, 77, 0, 0.2),             /* Ateş glow */
+    inset 0 0 60px rgba(255, 77, 0, 0.1);      /* İç glow */
+  transform: perspective(1000px) rotateY(-5deg); /* 3D dönüş */
+  transition: transform 0.5s ease;
+}
+
+/* Hover: Dönüşü sıfırla (düz gör) */
+.image-frame:hover {
+  transform: perspective(1000px) rotateY(0deg);
+}
+
+/* Profil resmi: object-fit: cover → Kutuyu doldur (bozulma olmadan).
+   filter: sepia + saturate → Sıcak ton veren filtre. */
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;               /* Kırpmadan doldur */
+  filter: sepia(20%) saturate(1.3) brightness(0.95); /* Sıcak filtre */
+  transition: all 0.5s ease;
+}
+
+/* Hover: Filtreyi kaldır, hafif büyüt */
+.profile-img:hover {
+  filter: sepia(0%) saturate(1.1) brightness(1.05);
+  transform: scale(1.03);          /* %3 büyüt */
+}
+
+/* Resim üzerinde ateş ışığı katmanı.
+   inset: 0 → Tüm yönlerden 0 (tam kaplama).
+   glow-pulse animasyonu ile nabız gibi parıldar. */
+.image-glow {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(255, 77, 0, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(255, 140, 0, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* ===== BÖLÜM STİLLERİ =====
+   Her ana bölüm (Hakkında, Yetenekler, Projeler) için.
+   max-width + margin: 0 auto → İçeriği ortalar. */
+.section {
+  padding: 6rem 2rem;              /* Üst-alt: 96px, sağ-sol: 32px */
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Bölüm başlığı: Altında gradient çizgi. */
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: #fff;
+  position: relative;
+  display: inline-block;           /* Çizgi yalnızca metin genişliğinde */
+}
+
+/* Başlık alt çizgisi: 60px genelişlikte gradient. */
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+}
+
+/* ===== HAKKINDA BÖLÜMÜ =====
+   auto-fit + minmax: Otomatik responsive grid.
+   Kartlar en az 280px, ekrana sığmazsa alt satıra geçer. */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Bilgi kartı: Hover'da yukarı kalkar, kenarlık kırmızılaşır. */
+.info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);     /* 4px yukarı */
+  box-shadow: 0 10px 40px rgba(255, 77, 0, 0.15);
+}
+
+/* Kart ikonu: Fonr Awesome veya emoji ikonları için kutu. */
+/* Kart ikonu: Font Awesome veya emoji ikonları için kutu.
+   flex-shrink: 0 olsaydı ikon daralmazdı (burada yok ama bilinmeli). */
+.card-icon {
+  /* Kartlardaki gerçek ikon elemanı (Font Awesome veya emoji) */
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.4rem; /* İkon boyutu */
+  color: #fff; /* Eğer inline style verilmediyse ikon rengi */
+}
+
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ===== YETENEKLER BÖLÜMÜ =====
+   index.html'ın yetenekler bölümüne ait.
+   (yetenekler.html kendi inline stillerini kullanır.) */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Yetenek kategorisi kartı */
+.skill-category {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.skill-category h3 {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.skill-item {
+  margin-bottom: 1rem;
+}
+
+.skill-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.skill-name {
+  color: var(--text);
+}
+
+.skill-percent {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* İlerleme çubuğu: Gri arkaplan + renkli dolum.
+   width: 0 → Başta boş, JS animated ile genişler.
+   shimmer → Çubuk üzerinde kayan parlama efekti. */
+.skill-bar {
+  height: 8px;
+  background: var(--border);       /* Gri arka plan */
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-progress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 4px;
+  width: 0;                        /* Başta 0, JS ile genişler */
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Shimmer: Parlama efekti çubuğun üzerinden geçer */
+.skill-progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;  /* 2 saniyede tekrar */
+}
+
+/* shimmer: Soldan sağa kayan ışık */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }   /* Sol dışı */
+  100% { transform: translateX(100%); }  /* Sağ dışı */
+}
+
+/* ===== PROJELER BÖLÜMÜ =====
+   Proje kartları grid düzeni.
+   Hover'da yukarı kalkar, ateş gölgesi belirir. */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;                 /* İç elementler taşmasın */
+  transition: all 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-8px);     /* 8px yukarı */
+  border-color: var(--primary);
+  box-shadow: 0 20px 60px rgba(255, 77, 0, 0.15);
+}
+
+/* Proje kartı resim alanı: Gradient arka plan + ikon. */
+.project-image {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: rgba(255,255,255,0.3);    /* Soluk beyaz ikon */
+}
+
+.project-content {
+  padding: 1.5rem;
+}
+
+.project-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.project-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Proje etiketi: Kırmızı kenarlıklı küçük yuvarlak rozet.
+   Örnek: "Vue.js", "React", "Node.js" */
+.project-tag {
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 77, 0, 0.15);  /* Hafif kırmızı */
+  border: 1px solid rgba(255, 77, 0, 0.3);
+  border-radius: 20px;                 /* Tam yuvarlak */
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+/* ===== İLETİŞİM BÖLÜMÜ =====
+   Sol: Bilgiler, Sağ: Form (2 sütunlu grid). */
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* Eşit 2 sütun */
+  gap: 3rem;
+  align-items: start;              /* Üste hizala */
+}
+
+.contact-info {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+}
+
+.contact-item:hover .contact-icon {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.contact-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 77, 0, 0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.contact-details h4 {
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.contact-details p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* GitHub özel stil */
+.contact-item.github:hover .contact-icon {
+  background: #24292e;
+}
+
+.contact-form {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+/* Form giriş alanları: focus'ta kırmızı kenarlık + parlama.
+   resize: vertical → Sadece dikeyde boyutlandırılabilir. */
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--dark-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 77, 0, 0.15);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ===== SOSYAL MEDYA LİNKLERİ =====
+   GitHub, LinkedIn, Twitter ikonları.
+   Hover'da kırmızı arka plan + yukarı zıplama. */
+.social-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-link {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px var(--fire-glow);
+}
+
+/* ===== ANİMASYONLAR =====
+   Tüm sayfalarda kullanılan ortak animasyonlar. */
+
+/* pulse: Büyü-küçül döngüsü (kalp ikonu için). */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }  /* Normal */
+  50% { transform: scale(1.1); }     /* %110 */
+}
+
+/* ===== FADE-IN (BELIRME) ANİMASYONU =====
+   IntersectionObserver (JS) ile 'visible' sınıfı eklenince tetiklenir.
+   
+   Başlangıç: opacity: 0 (görünmez) + translateY(30px) (30px aşağıda)
+   Sonu: opacity: 1 (görünür) + translateY(0) (yerinde)
+   
+   cubic-bezier → Özel hız eğrisi:
+   (0.4, 0, 0.2, 1) = Yavaş başla → hızlan → yavaş dur */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sıralı gecikme: Her kart bir sonrakinden 0.1s sonra belirir.
+   nth-child(n) → n'inci çocuk elemanı seçer. */
+.fade-in:nth-child(1) { transition-delay: 0s; }
+.fade-in:nth-child(2) { transition-delay: 0.1s; }
+.fade-in:nth-child(3) { transition-delay: 0.2s; }
+.fade-in:nth-child(4) { transition-delay: 0.3s; }
+
+/* ===== ALT SAYFA BAŞLIĞI =====
+   Hakkinda, blog, projeler gibi alt sayfalardaki büyük başlık alanı.
+   padding-top: 140px → Navbar'ın altında kalmaması için.
+   ::before → Arkasına radial gradient ışık efekti. */
+.page-header {
+  padding: 140px 24px 60px;
+  text-align: center;
+  position: relative;
+  z-index: 1;                      /* Canvas'ın üstünde */
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(255, 77, 0, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(255, 140, 0, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Gradient metin başlığı: clamp() ile responsive.
+   background-clip: text → Gradient'i metne uygular. */
+.page-header h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.page-header p {
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  position: relative;
+}
+
+/* Profil Kartı: Hakkında sayfasındaki kişisel bilgi kartı.
+   Grid: Sol=fotoğraf (200px sabit), Sağ=bilgi (kalan alan). */
+.profile-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 40px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.profile-image {
+  width: 200px;
+  height: 250px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid var(--border);
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile-info .title {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.profile-info .bio {
+  color: var(--text-muted);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+/* Bilgi Kartları Grid: 3 sütunlu.
+   Responsive: 900px altı=2 sütun, 600px altı=1 sütun. */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Responsive: tablet (900px) ve mobil (600px) için grid ayarı */
+@media (max-width: 900px) {
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Alt sayfa bilgi kartı: Hover'da sol çizgi + yukarı kalkma.
+   ::before ile solda 4px gradient çizgi (başta gizli, hover'da görünür). */
+.info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255, 77, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.info-card:hover::before {
+  opacity: 1;
+}
+
+.info-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.info-card p {
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* Alıntı Kutusu: Büyük tırnak işaretleri dekoratif (::before, ::after). */
+.quote-section {
+  margin-top: 60px;
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  position: relative;
+}
+
+.quote-section::before,
+.quote-section::after {
+  content: '"';
+  font-size: 8rem;
+  font-family: 'Playfair Display', serif;
+  color: var(--primary);
+  opacity: 0.15;
+  position: absolute;
+  line-height: 1;
+}
+
+.quote-section::before {
+  top: 10px;
+  left: 20px;
+}
+
+.quote-section::after {
+  bottom: -30px;
+  right: 20px;
+}
+
+.quote-text {
+  font-size: 1.5rem;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: var(--text);
+  max-width: 700px;
+  margin: 0 auto 20px;
+  line-height: 1.6;
+}
+
+.quote-author {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Navbar inner (hakkinda sayfası için) */
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* İçerik kapsayıcı: Alt sayfaların ana içeriği için.
+   max-width + margin auto → Ortalam. */
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Yıldız canvas: Hakkında sayfasındaki yıldız animasyonu için.
+   pointer-events: none → Tıklamaları engelleme. */
+#stars-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .profile-image {
+    margin: 0 auto;
+    width: 160px;
+    height: 200px;
+  }
+  .quote-text {
+    font-size: 1.2rem;
+  }
+}
+
+/* ===== RESPONSIVE (DUYARLI) TASARIM =====
+   @media → Ekran boyutuna göre stiller uygular.
+   max-width: 968px → Tablet ve altı.
+   
+   Grid tek sütuna döner: text altta, resim üstte (order ile sıralama).
+   order: 1 → Önce göster, order: 2 → Sonra göster. */
+@media (max-width: 968px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-text {
+    order: 2;
+  }
+
+  .hero-image {
+    order: 1;
+  }
+
+  .hero-subtitle {
+    margin: 0 auto 2rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .contact-container {
+    grid-template-columns: 1fr;
+  }
+
+  .image-frame {
+    max-width: 320px;
+  }
+}
+
+/* 640px altı: Mobil cihazlar.
+   nav-links gizlenir (hamburger menü yoksa).
+   Butonlar alt alta sıralanır. */
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .section {
+    padding: 4rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

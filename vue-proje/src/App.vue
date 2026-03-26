@@ -9,57 +9,39 @@
     <!-- Ana içerik -->
     <main>
       <Hero />
-      <About />
-      <Projects />
-      <Contact />
+      <div v-reveal><About /></div>
+      <div v-reveal><Blog /></div>
+      <div v-reveal><Skills /></div>
+      <div v-reveal><Projects /></div>
+      <div v-reveal><Contact /></div>
     </main>
     
-    <!-- Footer -->
-    <footer>
-      <p>Tasarım ve Kodlama <span class="heart">♥</span> 2024</p>
-    </footer>
+  
   </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
+import { useReveal, revealDirective } from './composables/useReveal'
+
 import Navbar from './components/Navbar.vue'
 import Hero from './components/Hero.vue'
 import About from './components/About.vue'
+import Blog from './components/Blog.vue'
+import Skills from './components/Skills.vue'
 import Projects from './components/Projects.vue'
 import Contact from './components/Contact.vue'
 import ParticlesCanvas from './components/ParticlesCanvas.vue'
 
-// Scroll reveal animasyonu
-// Bu kısım, .reveal sınıfına sahip bölümlerin sayfada aşağı doğru inerken
-// yumuşak bir şekilde görünmesini sağlar. IntersectionObserver ile
-// elementler ekranda görünür olduğunda onlara .visible sınıfı ekliyoruz.
+// Direktifi setup script içinde register ediyoruz
+const vReveal = revealDirective
+
+// Veya programatik kullanım (opsiyonel, v-reveal daha kolay)
+const { observeAll } = useReveal()
+
 onMounted(() => {
-  // Tüm .reveal sınıflı elementleri gözlemle
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible')
-        observer.unobserve(entry.target)
-      }
-    })
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px'
-  })
-  
-  document.querySelectorAll('.reveal').forEach(el => {
-    observer.observe(el)
-  })
-  
-  // Azaltılmış hareket tercihi kontrolü
-  // Eğer kullanıcı tarayıcı ayarlarından "reduce motion" seçmişse
-  // animasyonları çalıştırmak yerine tüm .reveal elemanlarını direkt görünür yapıyoruz.
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll('.reveal').forEach(el => {
-      el.classList.add('visible')
-    })
-  }
+  // Eğer v-reveal dışında, class="reveal" olan başka elemanlar varsa:
+  // observeAll()
 })
 </script>
 

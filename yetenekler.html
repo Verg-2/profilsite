@@ -288,6 +288,11 @@
       box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); /* Sarı gölge */
     }
 
+    .skill-progress.database {
+      background: linear-gradient(90deg, #7C3AED, #8B5CF6, #A78BFA);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.45); /* Mor gölge */
+    }
+
     /* ===== SHIMMER (PARLAMA) EFEKTİ =====
        ::after ile çubuğun üzerinden geçen beyaz ışık.
        translateX(-100%) → Başta solda gizli.
@@ -425,31 +430,6 @@
         </div>
       </div>
 
-      <!-- ===== BACKEND YETENEKLERİ =====
-           Aynı yapı: v-for ile backendSkills dizisini döngüler.
-           .backend sınıfı mor gradient verir. -->
-      <div class="skill-category">
-        <h3>⚙️ Backend</h3>
-        <div 
-          v-for="skill in backendSkills" 
-          :key="skill.name"
-          class="skill-item"
-        >
-          <div class="skill-info">
-            <span class="skill-name">{{ skill.name }}</span>
-            <span class="skill-percent">{{ skill.percent }}%</span>
-          </div>
-          <div class="skill-bar">
-            <div 
-              class="skill-progress backend"
-              :class="{ animate: animated }"
-              :style="{ transitionDelay: skill.delay + 'ms' }"
-              :data-width="skill.percent"
-            ></div>
-          </div>
-        </div>
-      </div>
-
       <!-- ===== ARAÇLAR =====
            Git, Docker, Figma gibi geliştirme araçları.
            .tools sınıfı yeşil gradient verir. -->
@@ -499,6 +479,28 @@
           </div>
         </div>
       </div>
+
+      <div class="skill-category">
+        <h3>🗄️ Veri Tabanları</h3>
+        <div 
+          v-for="skill in databaseSkills" 
+          :key="skill.name"
+          class="skill-item"
+        >
+          <div class="skill-info">
+            <span class="skill-name">{{ skill.name }}</span>
+            <span class="skill-percent">{{ skill.percent }}%</span>
+          </div>
+          <div class="skill-bar">
+            <div 
+              class="skill-progress database"
+              :class="{ animate: animated }"
+              :style="{ transitionDelay: skill.delay + 'ms' }"
+              :data-width="skill.percent"
+            ></div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -531,35 +533,36 @@
            - percent: Yüzde değeri (progress bar genişliği)
            - delay: Animasyon gecikmesi (ms) - sıralı belirme efekti */
         const frontendSkills = ref([
-          { name: 'HTML/CSS', percent: 95, delay: 100 },
-          { name: 'JavaScript', percent: 90, delay: 200 },
-          { name: 'Vue.js', percent: 88, delay: 300 },
-          { name: 'React', percent: 82, delay: 400 },
-          { name: 'TypeScript', percent: 75, delay: 500 }
-        ]);
-
-        const backendSkills = ref([
-          { name: 'Node.js', percent: 85, delay: 100 },
-          { name: 'Python', percent: 78, delay: 200 },
-          { name: 'PHP', percent: 75, delay: 300 },
-          { name: 'SQL', percent: 80, delay: 400 },
-          { name: 'MongoDB', percent: 72, delay: 500 }
+          { name: 'HTML/CSS', percent: 30, delay: 1000 },
+          { name: 'JavaScript', percent: 20, delay: 2000 },
+          { name: 'Vue.js', percent: 10, delay: 3000 },
+          { name: 'Kotlin', percent: 30, delay: 4000 },
+          { name: 'C#', percent: 30, delay: 5000 },
+          { name: 'PHP', percent: 75, delay: 6000 },
         ]);
 
         const toolsSkills = ref([
-          { name: 'Git', percent: 90, delay: 100 },
-          { name: 'Docker', percent: 70, delay: 200 },
-          { name: 'Figma', percent: 85, delay: 300 },
-          { name: 'VS Code', percent: 95, delay: 400 },
-          { name: 'Linux', percent: 75, delay: 500 }
+          { name: 'Git', percent: 90, delay: 1000 },
+          { name: 'Docker', percent: 70, delay: 2000 },
+          { name: 'Figma', percent: 85, delay: 3000 },
+          { name: 'VS Code', percent: 95, delay: 4000 },
+          { name: 'Linux', percent: 75, delay: 5000 }
         ]);
 
         const softSkills = ref([
-          { name: 'Problem Çözme', percent: 92, delay: 100 },
-          { name: 'Takım Çalışması', percent: 88, delay: 200 },
-          { name: 'İletişim', percent: 85, delay: 300 },
-          { name: 'Analitik Düşünce', percent: 90, delay: 400 },
-          { name: 'Öğrenme', percent: 95, delay: 500 }
+          { name: 'Problem Çözme', percent: 92, delay: 1000 },
+          { name: 'Takım Çalışması', percent: 88, delay: 2000 },
+          { name: 'İletişim', percent: 85, delay: 3000 },
+          { name: 'Analitik Düşünce', percent: 90, delay: 4000 },
+          { name: 'Öğrenme', percent: 95, delay: 5000 }
+        ]);
+
+        const databaseSkills = ref([
+          { name: 'MySQL', percent: 82, delay: 1000 },
+          { name: 'PostgreSQL', percent: 76, delay: 2000 },
+          { name: 'MongoDB', percent: 72, delay: 3000 },
+          { name: 'SQL Server', percent: 70, delay: 4000 },
+          
         ]);
 
         // animated: Progress barların animasyon durumu.
@@ -672,9 +675,9 @@
            Döndürülmeyen değişkenler template'de erişilemez! */
         return {
           frontendSkills,   // → v-for="skill in frontendSkills"
-          backendSkills,    // → v-for="skill in backendSkills"
           toolsSkills,      // → v-for="skill in toolsSkills"
           softSkills,       // → v-for="skill in softSkills"
+          databaseSkills,   // → v-for="skill in databaseSkills"
           animated          // → :class="{ animate: animated }"
         };
       }

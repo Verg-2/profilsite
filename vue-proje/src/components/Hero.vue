@@ -34,20 +34,20 @@
       <div class="hero-image" ref="cardRef">
         <div 
           class="wolf-card" 
-          @mouseenter="handleMouseEnter"
-          @mouseleave="handleMouseLeave"
-          @mousemove="handleMouseMove"
+          @mousemove="updateParallax"
+          @mouseleave="resetParallax"
         >
           <!-- Glow efekti -->
           <div class="wolf-glow" :style="glowStyle"></div>
           
           <!-- Profil görüntüsü -->
-          <img 
-            src="../assets/wolff.png" 
-            alt="Profil Fotoğrafı" 
-            class="wolf-image"
-            ref="imageRef"
-          />
+          <div ref="imageContainer" class="image-container">
+            <img 
+              src="../assets/wolff.png" 
+              alt="Profil Fotoğrafı" 
+              class="wolf-image"
+            />
+          </div>
           
           <!-- Heat shimmer overlay -->
           <div class="heat-shimmer"></div>
@@ -59,18 +59,17 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useParallax } from '../composables/useParallax'
 
-// Refs: HTML tarafındaki belirli kutuları (DOM elemanlarını) Vue içinde yakalamak için kullanıyoruz.
-// Böylece bu elemanların boyutuna/konumuna göre hesaplama yapabiliriz.
 const cardRef = ref(null)
-const imageRef = ref(null)
+const imageContainer = ref(null)
 const textRef = ref(null)
 
-// Mouse state: Fare konumunu ve kartın üzerinde olup olmadığını saklıyoruz.
-// Bu sayede kart üzerinde gezerken 3D/parallax efekti verebiliyoruz.
-const mouseX = ref(0)
-const mouseY = ref(0)
-const isHovering = ref(false)
+// Parallax hook
+// Buradaki strength değeri, parallax etkisinin ne kadar güçlü olacağını belirler
+const { currentX, currentY, updateParallax, resetParallax } = useParallax(imageContainer, {
+  strength: 20
+})
 
 // Scroll to section
 // Kullanıcı butona tıkladığında sayfada ilgili ID'ye sahip bölüme yumuşak geçiş yapar.
@@ -81,39 +80,14 @@ const scrollTo = (id) => {
   }
 }
 
-// Mouse handlers
-// Kartın üzerine girince/çıkınca ve kart üzerinde hareket edince
-// mouseX ve mouseY değerlerini güncelliyoruz.
-const handleMouseEnter = () => {
-  isHovering.value = true
-}
-
-const handleMouseLeave = () => {
-  isHovering.value = false
-  mouseX.value = 0
-  mouseY.value = 0
-}
-
-const handleMouseMove = (e) => {
-  if (!cardRef.value) return
-  
-  // Kartın boyutuna ve pozisyonuna göre imlecin -1 ile 1 arasında normalize edilmiş
-  // X ve Y değerlerini hesaplıyoruz. Bu değerler CSS transform için kullanılacak.
-  const rect = cardRef.value.getBoundingClientRect()
-  mouseX.value = ((e.clientX - rect.left) / rect.width) * 2 - 1
-  mouseY.value = ((e.clientY - rect.top) / rect.height) * 2 - 1
-}
-
 // Computed styles
-// Fare konumuna göre glow (ışık) katmanının ne kadar kayacağını hesaplıyoruz.
-// computed kullanarak, mouseX/mouseY her değiştiğinde otomatik yeniden hesaplanmasını sağlıyoruz.
+// Mouse konumuna göre glow efektini güncelle
 const glowStyle = computed(() => {
-  const x = mouseX.value * 30
-  const y = mouseY.value * 20
-  const intensity = isHovering.value ? 1 : 0.6
-  
+  const x = currentX.value * 50 // -50 to 50%
+  const y = currentY.value * 50 // -50 to 50%
   return {
-    transform: `translate(${x}px, ${y}px) scale(${intensity})`
+    background: `radial-gradient(circle at ${50 + x}% ${50 + y}%, rgba(255, 59, 29, 0.4), transparent 60%)`,
+    transform: `translate(${x * 0.5}px, ${y * 0.5}px)`
   }
 })
 </script>

@@ -770,6 +770,19 @@ body {
 .fade-in:nth-child(2) { transition-delay: 0.1s; }
 .fade-in:nth-child(3) { transition-delay: 0.2s; }
 .fade-in:nth-child(4) { transition-delay: 0.3s; }
+.fade-in:nth-child(5) { transition-delay: 0.4s; }
+.fade-in:nth-child(6) { transition-delay: 0.5s; }
+
+/* Alt sayfa partikül canvas'ı (blog, projeler, iletisim, yetenekler). */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
 
 /* ===== ALT SAYFA BAŞLIĞI =====
    Hakkinda, blog, projeler gibi alt sayfalardaki büyük başlık alanı.
@@ -1107,6 +1120,13 @@ body {
   .btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* Alt sayfalarda tablet/mobilde menuyu gizle. */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
   }
 }
 

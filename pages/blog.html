@@ -7,7 +7,7 @@
   <meta charset="UTF-8"> <!-- Türkçe karakter desteği (ö,ü,ş,ğ,ı,ç) -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobilde düzgün görünmesi için -->
   <title>Blog | Kadir</title> <!-- Tarayıcı sekmesindeki başlık -->
-  <link rel="stylesheet" href="css/style.css"> <!-- Ana CSS dosyasını bağla -->
+  <link rel="stylesheet" href="../css/style.css"> <!-- Ana CSS dosyasını bağla -->
   
   <!-- Google Fonts bağlantısı: preconnect ile sunucuya önceden bağlanarak hız kazanılır -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -351,62 +351,15 @@
     .nav-links a.active::after {
       width: 100%;
     }
-    /* @keyframes pulse: Animasyonun kare kare tanımı.
-       0% ve 100% = Başlangıç ve bitiş (scale(1) = normal boyut).
-       50% = Orta nokta (scale(1.1) = %10 büyütme).
-       Bu, kalbin sürekli nabız atmasını sağlar.
-    */
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    /* ===== CANVAS (Partikül Animasyonu için) =====
-       position: fixed = Sayfa kaydırıldığında bile tamamen arka planda sabit kalır.
-       pointer-events: none = Canvas'a tıklama yapılamaz, alttaki butonlara ulaşılabilir.
-       z-index: 0 = Diğer elemanların arkasında kalır.
-    */
-    #particles-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
     /* ===== RESPONSIVE TASARIM =====
        @media (max-width: 768px): Ekran genişliği 768px'den küçükse.
        Tablet ve mobil cihazlarda farklı görünüm sağlar.
-       Nav linkleri gizlenir (hamburger menü eklenebilir).
        Blog grid tek sütun olur.
     */
     @media (max-width: 768px) {
-      .nav-links {
-        display: none;           /* Mobilde navigasyonu gizle */
-      }
-      
       .blog-grid {
         grid-template-columns: 1fr; /* Tek sütun düzeni */
       }
-    }
-
-    /* ===== FADE-IN ANİMASYONU =====
-       Elemanlar başlangıçta görünmez ve 30px aşağıda.
-       JavaScript (IntersectionObserver) elemanı ekranda gördüğünde
-       .visible sınıfı ekler, böylece eleman yukarı kayarak belirir.
-    */
-    .fade-in {
-      opacity: 0;                /* Başlangıçta görünmez */
-      transform: translateY(30px); /* 30px aşağıda başla */
-      transition: all 0.6s ease;  /* 0.6 saniyede yumuşak geçiş */
-    }
-
-    /* IntersectionObserver .visible ekleyince bu stiller aktif olur */
-    .fade-in.visible {
-      opacity: 1;                /* Görünür yap */
-      transform: translateY(0);  /* Normal yerine taşı */
     }
   </style>
 </head>
@@ -430,7 +383,7 @@
       <ul class="nav-links">
         <li><a href="index.html">Anasayfa</a></li>
         <li><a href="hakkinda.html">Hakkında</a></li>
-        <li><a href="blog.html">Blog</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
         <li><a href="yetenekler.html">Yetenekler</a></li>
         <li><a href="projects.html">Projeler</a></li>
         <li><a href="contact.html">İletişim</a></li>
@@ -538,7 +491,7 @@
     </div>
   </main>
   <!-- JavaScript - Vue.js Animasyon Sistemi (canvas, fade-in, navbar scroll işlemlerini yönetir) -->
-  <script src="js/animations.js"></script>
+  <script src="../js/animations.js"></script>
 </body>
 </html>
 

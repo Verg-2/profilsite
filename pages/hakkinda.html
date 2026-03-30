@@ -10,7 +10,7 @@
   <!-- ===== CSS DOSYASI =====
        Ana stil dosyası: Tüm sayfalarda ortak kullanılan stiller.
        Navbar, hero, butonlar, kartlar vs. burada tanımlı. -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
   
   <!-- ===== VUE.JS CDN =====
        Vue.js 3 kütüphanesi: CDN'den yüklenir.
@@ -21,7 +21,7 @@
   <!-- ===== PERFORMANS OPTİMİZASYONU =====
        preload: CSS dosyasını öncelikli yükle (sayfa daha hızlı açılır).
        preconnect: Font sunucularına önceden bağlan (DNS çözümleme süresi kısaltılır). -->
-  <link rel="preload" href="css/style.css" as="style">
+  <link rel="preload" href="../css/style.css" as="style">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
@@ -58,7 +58,7 @@
         <ul class="nav-links">
           <!-- Her <li> bir menü öğesi -->
           <li><a href="index.html">Anasayfa</a></li>
-          <li><a href="hakkinda.html">Hakkında</a></li>
+          <li><a href="hakkinda.html" class="active">Hakkında</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="yetenekler.html">Yetenekler</a></li>
           <li><a href="projects.html">Projeler</a></li>
@@ -86,7 +86,7 @@
       <div class="profile-card fade-in">
         <div class="profile-image">
           <!-- Profil fotoğrafı: alt metni ekran okuyucular için önemli (erişilebilirlik) -->
-          <img src="img/wolff.png" alt="Profil Fotoğrafı">
+          <img src="../img/wolff.png" alt="Profil Fotoğrafı">
         </div>
         <div class="profile-info">
           <h2>Merhaba, ben Kadir</h2>
@@ -161,7 +161,7 @@
           <p>
             Her gün bir şeyler öğrenmeye çalışıyorum. Hatalarımdan ders çıkarıyor, 
             daha iyi bir geliştirici olmak için çabalıyorum. 
-            Başarıya giden yolun sürekli öğğrenmeden geçtiğine inanıyorum.
+            Başarıya giden yolun sürekli öğrenmeden geçtiğine inanıyorum.
           </p>
         </div>
 
@@ -185,7 +185,7 @@
        - Navbar scroll efekti
        - Fade-in elementleri (IntersectionObserver)
        - Fare parallax efekti -->
-  <script src="js/animations.js"></script>
+  <script src="../js/animations.js"></script>
 </body>
 </html>
 

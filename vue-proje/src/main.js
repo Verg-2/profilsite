@@ -1,16 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import './style.css'
+import router from './router'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
-// Create Vue app
-const app = createApp(App)
-
-// Global error handler
-app.config.errorHandler = (err, vm, info) => {
-  console.error('Vue Error:', err)
-  console.error('Info:', info)
-}
-
-// Mount app
-app.mount('#app')
+createApp(App).use(router).mount('#app')
 

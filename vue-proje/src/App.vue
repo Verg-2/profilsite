@@ -1,61 +1,70 @@
 <template>
-  <div id="app-container">
-    <!-- Arka plan partikülleri -->
-    <ParticlesCanvas :particle-count="50" :opacity="0.5" />
-    
-    <!-- Navigasyon -->
-    <Navbar />
-    
-    <!-- Ana içerik -->
-    <main>
-      <Hero />
-      <div v-reveal><About /></div>
-      <div v-reveal><Blog /></div>
-      <div v-reveal><Skills /></div>
-      <div v-reveal><Projects /></div>
-      <div v-reveal><Contact /></div>
-    </main>
-    
-  
+  <div>
+    <!--
+      Global navbar:
+      Statik HTML'deki ortak menuyu Vue Router ile tek dosyada yonetiyoruz.
+      Bu sayede pages klasorundeki HTML'leri bozmeden Vue tarafinda ayni deneyimi kuruyoruz.
+    -->
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <router-link to="/" class="logo">Kadir</router-link>
+
+        <button
+          class="menu-toggle"
+          type="button"
+          :aria-expanded="isMenuOpen ? 'true' : 'false'"
+          aria-label="Menüyü aç/kapat"
+          @click="isMenuOpen = !isMenuOpen"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <ul class="nav-links" :class="{ open: isMenuOpen }" @click="isMenuOpen = false">
+          <li><router-link to="/">Anasayfa</router-link></li>
+          <li><router-link to="/hakkinda">Hakkında</router-link></li>
+          <li><router-link to="/blog">Blog</router-link></li>
+          <li><router-link to="/yetenekler">Yetenekler</router-link></li>
+          <li><router-link to="/projects">Projeler</router-link></li>
+          <li><router-link to="/contact">İletişim</router-link></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Aktif route'un bileşeni burada gösterilir. -->
+    <router-view />
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useReveal, revealDirective } from './composables/useReveal'
+import { nextTick, onBeforeUnmount, onMounted, watch, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import '@/assets/style.css'
+import { cleanupPageAnimations, initPageAnimations } from '@/assets/js/page-animations'
 
-import Navbar from './components/Navbar.vue'
-import Hero from './components/Hero.vue'
-import About from './components/About.vue'
-import Blog from './components/Blog.vue'
-import Skills from './components/Skills.vue'
-import Projects from './components/Projects.vue'
-import Contact from './components/Contact.vue'
-import ParticlesCanvas from './components/ParticlesCanvas.vue'
+const route = useRoute()
+const isMenuOpen = ref(false)
 
-// Direktifi setup script içinde register ediyoruz
-const vReveal = revealDirective
+async function refreshAnimations() {
+  // Vue Router sayfa degistirdiginde eski listener'lari temizlemez,
+  // bu yuzden once aktif animasyonlari kapatiyoruz.
+  cleanupPageAnimations()
 
-// Veya programatik kullanım (opsiyonel, v-reveal daha kolay)
-const { observeAll } = useReveal()
+  // Yeni route'un DOM'u tamamen olustuktan sonra animasyonlari tekrar bagliyoruz.
+  await nextTick()
+  initPageAnimations()
+}
 
 onMounted(() => {
-  // Eğer v-reveal dışında, class="reveal" olan başka elemanlar varsa:
-  // observeAll()
+  refreshAnimations()
+})
+
+watch(() => route.fullPath, () => {
+  refreshAnimations()
+})
+
+onBeforeUnmount(() => {
+  cleanupPageAnimations()
 })
 </script>
-
-<style>
-/* App container */
-#app-container {
-  min-height: 100vh;
-  position: relative;
-}
-
-/* Main content */
-main {
-  position: relative;
-  z-index: 1;
-}
-</style>
-

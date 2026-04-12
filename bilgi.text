@@ -1,0 +1,8 @@
+
+KISA ÖZET - PROJEYİ ÇALIŞTIRMAK İÇİN:
+--------------------------------------------------
+Terminali (sayfa2 klasöründeyken) açıp sırasıyla şu üç komutu girmen yeterlidir:
+
+1) cd vue-proje
+2) npm install
+3) npm run dev

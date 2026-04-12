@@ -6,6 +6,7 @@ const routes = [
   { path: '/blog', name: 'Blog', component: () => import('../views/BlogView.vue') },
   { path: '/yetenekler', name: 'Yetenekler', component: () => import('../views/YeteneklerView.vue') },
   { path: '/projects', name: 'Projects', component: () => import('../views/ProjectsView.vue') },
+  { path: '/proje/:id', name: 'ProjectDetail', component: () => import('../views/ProjectDetailView.vue') },
   { path: '/contact', name: 'Contact', component: () => import('../views/ContactView.vue') }
 ]
 

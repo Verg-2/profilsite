@@ -75,23 +75,12 @@
         <p v-if="state.errorMessage" class="form-error">{{ state.errorMessage }}</p>
 
         <div class="form-group">
-          <label for="name">Ad Soyad</label>
+          <label for="name">Ad</label>
           <input
             type="text"
             id="name"
             placeholder="Adınızı girin"
             v-model="form.ad"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="email">E-posta</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="E-posta adresiniz"
-            v-model="form.email"
             required
           />
         </div>
@@ -103,6 +92,17 @@
             id="soyad"
             placeholder="Soyadınızı girin"
             v-model="form.soyad"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-posta</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="E-posta adresiniz"
+            v-model="form.email"
             required
           />
         </div>
@@ -170,21 +170,29 @@ async function handleSubmit() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        ad: form.ad,
-        soyad: form.soyad,
-        email: form.email,
-        mesaj: form.mesaj,
-        webSitesi: form.webSitesi
+        Ad: form.ad,
+        Soyad: form.soyad,
+        Email: form.email,
+        Mesaj: form.mesaj,
+        WebSitesi: form.webSitesi
       })
     })
 
     const data = await response.json().catch(() => ({}))
+    console.error("Server response was:", response.status, data);
 
     if (!response.ok || data.success === false) {
-      const hataMesaji = data?.mesaj || 'Mesaj gönderilemedi.'
-      const detay = Array.isArray(data?.hatalar) && data.hatalar.length
-        ? ` Detay: ${data.hatalar.join(' ')}`
-        : ''
+      let hataMesaji = data?.mesaj || data?.title || 'Mesaj gönderilemedi.'
+      let detay = ''
+      
+      // ASP.NET Core tarzı validation hatalarını yakala
+      if (data?.errors) {
+        const errorList = Object.values(data.errors).flat()
+        detay = ` Detay: ${errorList.join(' ')}`
+      } else if (Array.isArray(data?.hatalar) && data.hatalar.length) {
+        detay = ` Detay: ${data.hatalar.join(' ')}`
+      }
+
       state.errorMessage = `${hataMesaji}${detay}`
       return
     }

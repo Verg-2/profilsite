@@ -9,14 +9,14 @@
 
     <main class="projects-container">
       <div class="filter-bar">
-        <button class="filter-btn active"><span>Tümü</span></button>
-        <button class="filter-btn"><span>Web</span></button>
-        <button class="filter-btn"><span>Mobil</span></button>
-        <button class="filter-btn"><span>Tasarım</span></button>
+        <button class="filter-btn" :class="{ active: currentFilter === 'Tümü' }" @click="currentFilter = 'Tümü'"><span>Tümü</span></button>
+        <button class="filter-btn" :class="{ active: currentFilter === 'Web' }" @click="currentFilter = 'Web'"><span>Web</span></button>
+        <button class="filter-btn" :class="{ active: currentFilter === 'Mobil' }" @click="currentFilter = 'Mobil'"><span>Mobil</span></button>
+        <button class="filter-btn" :class="{ active: currentFilter === 'Tasarım' }" @click="currentFilter = 'Tasarım'"><span>Tasarım</span></button>
       </div>
 
       <div class="projects-grid">
-        <article class="project-card fade-in">
+        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Web'">
           <div class="project-image swiper-image-container">
             <Swiper
               @swiper="(swiper) => setSwiperRef(0, swiper)"
@@ -50,7 +50,7 @@
           </div>
         </article>
 
-        <article class="project-card fade-in">
+        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Web'">
           <div class="project-image swiper-image-container">
             <Swiper
               @swiper="(swiper) => setSwiperRef(1, swiper)"
@@ -82,7 +82,7 @@
           </div>
         </article>
 
-        <article class="project-card fade-in">
+        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Mobil'">
           <div class="project-image swiper-image-container">
             <Swiper
               @swiper="(swiper) => setSwiperRef(2, swiper)"
@@ -114,7 +114,7 @@
           </div>
         </article>
 
-        <article class="project-card fade-in">
+        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Web'">
           <div class="project-image swiper-image-container">
             <Swiper
               @swiper="(swiper) => setSwiperRef(3, swiper)"
@@ -146,7 +146,7 @@
           </div>
         </article>
 
-        <article class="project-card fade-in">
+        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Tasarım'">
           <div class="project-image swiper-image-container">
             <Swiper
               @swiper="(swiper) => setSwiperRef(4, swiper)"
@@ -178,7 +178,7 @@
           </div>
         </article>
 
-        <article class="project-card fade-in">
+        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Mobil'">
           <div class="project-image swiper-image-container">
             <Swiper
               @swiper="(swiper) => setSwiperRef(5, swiper)"
@@ -218,6 +218,8 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, EffectCreative } from 'swiper/modules';
+
+const currentFilter = ref('Tümü');
 
 // Swiper Stilleri
 import 'swiper/css';

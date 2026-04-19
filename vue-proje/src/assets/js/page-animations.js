@@ -7,6 +7,10 @@
 
 let cleanups = []
 
+function getThemeColor(darkColor, lightColor) {
+  return document.documentElement.getAttribute('data-theme') === 'light' ? lightColor : darkColor
+}
+
 function addCleanup(fn) {
   if (typeof fn === 'function') {
     cleanups.push(fn)
@@ -88,7 +92,7 @@ function fireParticles(canvasId) {
       return
     }
 
-    ctx.fillStyle = 'rgba(10, 10, 12, 0.18)'
+    ctx.fillStyle = getThemeColor('rgba(10, 10, 12, 0.18)', 'rgba(250, 250, 250, 0.18)')
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.globalCompositeOperation = 'lighter'
 
@@ -218,10 +222,10 @@ function initNavbarScroll() {
 
   const handleScroll = () => {
     if (window.scrollY > 50) {
-      navbar.style.background = 'rgba(10, 10, 12, 0.98)'
-      navbar.style.boxShadow = '0 2px 30px rgba(255, 77, 0, 0.1)'
+      navbar.style.background = getThemeColor('rgba(10, 10, 12, 0.98)', 'rgba(250, 250, 250, 0.98)')
+      navbar.style.boxShadow = getThemeColor('0 2px 30px rgba(255, 77, 0, 0.1)', '0 2px 30px rgba(255, 87, 34, 0.1)')
     } else {
-      navbar.style.background = 'rgba(10, 10, 12, 0.9)'
+      navbar.style.background = getThemeColor('rgba(10, 10, 12, 0.9)', 'rgba(250, 250, 250, 0.9)')
       navbar.style.boxShadow = 'none'
     }
   }
@@ -340,8 +344,8 @@ function starParticles(canvasId) {
       canvas.width,
     )
 
-    bgGradient.addColorStop(0, 'rgba(10, 10, 12, 0)')
-    bgGradient.addColorStop(1, 'rgba(10, 10, 12, 0.3)')
+    bgGradient.addColorStop(0, getThemeColor('rgba(10, 10, 12, 0)', 'rgba(250, 250, 250, 0)'))
+    bgGradient.addColorStop(1, getThemeColor('rgba(10, 10, 12, 0.3)', 'rgba(250, 250, 250, 0.3)'))
     ctx.fillStyle = bgGradient
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 

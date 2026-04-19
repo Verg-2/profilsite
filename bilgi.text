@@ -6,3 +6,18 @@ Terminali (sayfa2 klasöründeyken) açıp sırasıyla şu üç komutu girmen ye
 1) cd vue-proje
 2) npm install
 3) npm run dev
+
+
+DEĞİŞİKLİKLERİ GITHUB'A GÖNDERMEK (PUSH) İÇİN:
+--------------------------------------------------
+Projende yaptığın güncellemeleri GitHub'a kaydetmek için terminalde (vue-proje klasöründeyken) sırasıyla şu komutları girmelisin:
+
+1) git add .
+   (Bu komut yaptığın tüm değişiklikleri kaydetmek üzere hazırlar)
+
+2) git commit -m "Yaptığım değişikliklerin kısa bir açıklaması"
+  
+  
+
+3) git push origin main
+   (Bu komut değişiklikleri GitHub'a gönderir. Eğer dalın adı 'master' ise 'main' yerine 'master' yazmalısın)

@@ -179,8 +179,6 @@ async function handleSubmit() {
     })
 
     const data = await response.json().catch(() => ({}))
-    console.error("Server response was:", response.status, data);
-
     if (!response.ok || data.success === false) {
       let hataMesaji = data?.mesaj || data?.title || 'Mesaj gönderilemedi.'
       let detay = ''

@@ -31,19 +31,14 @@ html {
    line-height: 1.6 → Satır yüksekliği (okunabilirlik için). */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #0a0a0c;            /* Koyu arka plan */
-  color: #e5e5e5;                  /* Açık metin rengi */
+  background: var(--dark-bg);            
+  color: var(--text);                  
   overflow-x: hidden;
   line-height: 1.6;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* ===== CSS DEĞİŞKENLERİ (CUSTOM PROPERTIES) =====
-   :root → HTML elementinin kendisi (en üst kapsam).
-   --isim: değer; şeklinde tanımlanır.
-   var(--isim) ile her yerde kullanılır.
-   
-   AVANTAJI: Rengi değiştirmek istersen TEK YERDEN değiştirirsin.
-   Örneğin --primary'yi değiştirsen tüm butonlar, çizgiler, gölgeler değişir. */
+/* ===== CSS DEĞİŞKENLERİ (CUSTOM PROPERTIES) ===== */
 :root {
   --primary: #ff4d00;        /* Ana renk: Ateş kırmızısı */
   --primary-dark: #cc3d00;   /* Koyu versiyon */
@@ -53,13 +48,37 @@ body {
   
   --dark-bg: #0a0a0c;        /* Arka plan */
   --card-bg: #141418;        /* Kart arka planı */
-  --border: #1f1f25;         /* Kenarlık rengi */
+  --border: #333342;         /* Daha belirgin kenarlık rengi (Dark) */
   --text: #e5e5e5;           /* Ana metin */
   --text-muted: #8b8b8b;     /* Soluk metin */
   
   /* Gölge renkleri: rgba ile saydamlık ayarlanır */
   --fire-glow: rgba(255, 77, 0, 0.5);      /* Ateş parlaması */
   --fire-glow-soft: rgba(255, 107, 53, 0.3); /* Yumuşak ateş */
+  
+  --hover-text-color: #fff;
+  --skill-bar-bg: #1f1f25;
+}
+
+[data-theme="light"] {
+  --primary: #f05a28;        
+  --primary-dark: #d84518;   
+  --secondary: #ff845e;      
+  --accent: #f5a623;         
+  --accent-glow: #fca020;    
+  
+  /* Daha yumuşak, göz yormayan açık renk (Cream/Beige tonları) */
+  --dark-bg: #f8f6f2;        
+  --card-bg: #ffffff;        
+  --border: #d4cec5;         /* Daha belirgin kenarlık rengi (Light) */
+  --text: #2a2724;           
+  --text-muted: #736d67;     
+  
+  --fire-glow: rgba(240, 90, 40, 0.25);      
+  --fire-glow-soft: rgba(255, 132, 94, 0.15); 
+  
+  --hover-text-color: #d84518; /* Light modda hover olunan yazı koyu turuncu */
+  --skill-bar-bg: #d4cec5;     /* Light modda yetenek barı arkaplanı belirgin olsun */
 }
 
 /* ===== NAVİGASYON ÇUBUĞU =====
@@ -141,7 +160,7 @@ body {
 }
 
 .nav-links a:hover {
-  color: #fff;                        /* Beyaz */
+  color: var(--hover-text-color);
   text-shadow: 0 0 12px rgba(255, 59, 29, 0.45);
   transform: translateY(-1px);
 }
@@ -331,7 +350,7 @@ body {
 
 .btn-secondary:hover {
   border-color: var(--primary);    /* Kırmızı kenarlık */
-  color: #fff;
+  color: var(--hover-text-color);
   background: rgba(255, 77, 0, 0.1); /* Hafif kırmızı arka plan */
 }
 
@@ -542,7 +561,7 @@ body {
    shimmer → Çubuk üzerinde kayan parlama efekti. */
 .skill-bar {
   height: 8px;
-  background: var(--border);       /* Gri arka plan */
+  background: var(--skill-bar-bg);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -619,9 +638,9 @@ body {
   z-index: 1;
 }
 
-.filter-btn:hover {
+.filter-btn:hover:not(.active) {
   border-color: var(--primary);
-  color: #fff;
+  color: var(--hover-text-color);
 }
 
 .filter-btn.active {
@@ -723,7 +742,7 @@ body {
 .project-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
   margin-bottom: 12px;
 }
 
@@ -755,7 +774,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #ff3b1d;
+  color: var(--primary);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
@@ -766,7 +785,7 @@ body {
 
 .project-link:hover {
   gap: 12px;
-  color: #ffb000;
+  color: var(--accent);
 }
 
 /* ===== İLETİŞİM SAYFASI ===== */
@@ -1558,7 +1577,7 @@ body {
   }
 }
 
-/* Alt sayfa bilgi kartı: Hover'da sol çizgi + yukarı kalkma.
+/* Alt sayfa bilgi kartı: Hover'da sol çizgi + yukarı kalkar.
    ::before ile solda 4px gradient çizgi (başta gizli, hover'da görünür). */
 .info-card {
   background: var(--card-bg);
@@ -1767,6 +1786,22 @@ body {
     width: 100%;
     justify-content: center;
   }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .filter-btn {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    flex: 1;
+    text-align: center;
+  }
 }
 
 /* Alt sayfalarda tablet/mobilde menuyu gizle. */
@@ -1824,3 +1859,34 @@ body {
   }
 }
 
+/* ==========================================================
+   TEMA GEÇİŞİ ANİMASYONU (View Transitions API)
+   ========================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Yeni temanın her zaman üstte olması ve tıklanan yerden büyümesi için */
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* ==========================================================
+   AÇIK TEMA (Light Theme) ÖZEL STİLLERİ
+   ========================================================== */
+[data-theme="light"] .mobile-bottom-nav {
+  background: rgba(248, 246, 242, 0.85); /* Açık temada tok bir bej/beyaz arkaplan */
+  border-color: rgba(212, 206, 197, 0.8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 10px 25px rgba(240, 90, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+[data-theme="light"] .nav-links {
+  background: rgba(253, 251, 247, 0.96);
+  border-color: var(--border);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+}

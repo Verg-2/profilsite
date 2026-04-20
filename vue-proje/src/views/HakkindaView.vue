@@ -9,7 +9,7 @@
 
     <main class="content-container">
       <div class="profile-card fade-in">
-        <div class="profile-image">
+        <div class="profile-image" ref="tiltRef">
           <img src="@/assets/img/wolff.png" alt="Profil Fotoğrafı" />
         </div>
         <div class="profile-info">
@@ -67,5 +67,27 @@
 </template>
 
 <script setup>
-// Animasyonlar page-animations.js tarafından yönetiliyor
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+import VanillaTilt from 'vanilla-tilt'
+
+const tiltRef = ref(null)
+
+onMounted(() => {
+  if (tiltRef.value) {
+    VanillaTilt.init(tiltRef.value, {
+      max: 15,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.3,
+      scale: 1.05,
+      gyroscope: true
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  if (tiltRef.value && tiltRef.value.vanillaTilt) {
+    tiltRef.value.vanillaTilt.destroy()
+  }
+})
 </script>

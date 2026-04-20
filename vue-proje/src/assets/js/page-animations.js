@@ -55,11 +55,18 @@ function fireParticles(canvasId) {
   if (!setup) return
 
   const { canvas, ctx } = setup
-  const colors = [
-    [255, 140, 0],
-    [255, 80, 0],
-    [255, 200, 50],
-  ]
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+  const colors = isLight
+    ? [
+        [240, 90, 40],
+        [216, 69, 24],
+        [245, 166, 35],
+      ]
+    : [
+        [255, 140, 0],
+        [255, 80, 0],
+        [255, 200, 50],
+      ]
 
   const particles = []
   const particleCount = 60
@@ -94,7 +101,7 @@ function fireParticles(canvasId) {
 
     ctx.fillStyle = getThemeColor('rgba(10, 10, 12, 0.18)', 'rgba(250, 250, 250, 0.18)')
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.globalCompositeOperation = 'lighter'
+    ctx.globalCompositeOperation = isLight ? 'source-over' : 'lighter'
 
     for (let index = 0; index < particles.length; index += 1) {
       const particle = particles[index]
@@ -290,12 +297,20 @@ function starParticles(canvasId) {
       this.twinkleSpeed = Math.random() * 0.02 + 0.01
       this.twinklePhase = Math.random() * Math.PI * 2
 
-      const colors = [
-        [255, 77, 0],
-        [255, 107, 53],
-        [255, 165, 0],
-        [255, 255, 255],
-      ]
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+      const colors = isLight 
+        ? [
+            [240, 90, 40],
+            [255, 132, 94],
+            [252, 160, 32],
+            [100, 100, 100],
+          ]
+        : [
+            [255, 77, 0],
+            [255, 107, 53],
+            [255, 165, 0],
+            [255, 255, 255],
+          ]
 
       this.color = colors[Math.floor(Math.random() * colors.length)]
     }
@@ -366,11 +381,18 @@ function floatingParticles(canvasId) {
   if (!setup) return
 
   const { canvas, ctx } = setup
-  const colors = [
-    [255, 59, 29],
-    [255, 140, 0],
-    [255, 176, 0],
-  ]
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+  const colors = isLight
+    ? [
+        [240, 90, 40],
+        [255, 132, 94],
+        [252, 160, 32],
+      ]
+    : [
+        [255, 59, 29],
+        [255, 140, 0],
+        [255, 176, 0],
+      ]
 
   const particles = Array.from({ length: 50 }, () => ({
     x: Math.random() * canvas.width,
@@ -386,7 +408,7 @@ function floatingParticles(canvasId) {
 
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.globalCompositeOperation = 'lighter'
+    ctx.globalCompositeOperation = isLight ? 'source-over' : 'lighter'
 
     particles.forEach((particle) => {
       particle.x += particle.speedX
@@ -427,14 +449,16 @@ function verticalLines(canvasId) {
 
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.globalCompositeOperation = 'lighter'
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+    ctx.globalCompositeOperation = isLight ? 'source-over' : 'lighter'
 
     lines.forEach((line) => {
       line.x += Math.sin(Date.now() * 0.001) * 0.2
 
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
       gradient.addColorStop(0, 'transparent')
-      gradient.addColorStop(0.5, `rgba(255, 100, 0, ${line.opacity})`)
+      const colorRGB = document.documentElement.getAttribute('data-theme') === 'light' ? '240, 90, 40' : '255, 100, 0'
+      gradient.addColorStop(0.5, `rgba(${colorRGB}, ${line.opacity})`)
       gradient.addColorStop(1, 'transparent')
 
       ctx.strokeStyle = gradient
@@ -463,7 +487,7 @@ export function initPageAnimations() {
     verticalLines('particles-canvas')
   } else if (document.querySelector('.blog-container')) {
     floatingParticles('particles-canvas')
-  } else if (document.querySelector('.projects-container')) {
+  } else if (document.querySelector('.projects-container') || document.querySelector('.project-detail-page')) {
     floatingParticles('particles-canvas')
   } else if (document.querySelector('.skills-container')) {
     floatingParticles('particles-canvas')

@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="hero-image">
-          <div class="image-frame">
+          <div class="image-frame" ref="tiltRef">
             <img src="@/assets/img/wolff.png" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
             <div class="image-glow" id="image-glow"></div>
           </div>
@@ -32,14 +32,33 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+import VanillaTilt from 'vanilla-tilt'
 
 // Fire canvas ref for animations.js
 const fireCanvas = ref(null)
+const tiltRef = ref(null)
 
 onMounted(() => {
   // Trigger index animations (app.js fire + parallax)
   // animations.js detects #fire-canvas and initIndex()
+  
+  if (tiltRef.value) {
+    VanillaTilt.init(tiltRef.value, {
+      max: 15,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.3,
+      scale: 1.05,
+      gyroscope: true
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  if (tiltRef.value && tiltRef.value.vanillaTilt) {
+    tiltRef.value.vanillaTilt.destroy()
+  }
 })
 </script>
 

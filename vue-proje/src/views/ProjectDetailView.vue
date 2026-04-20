@@ -70,7 +70,7 @@
           <p class="info-text">{{ projectData.challenges }}</p>
           <ul class="solution-list">
              <li v-for="(sol, sIdx) in projectData.solutions" :key="sIdx">
-               <i class="fa-solid fa-check" style="color: #FFB000;"></i> {{ sol }}
+               <i class="fa-solid fa-check" style="color: var(--accent);"></i> {{ sol }}
              </li>
           </ul>
         </div>
@@ -232,11 +232,14 @@ onMounted(() => {
       }
     });
 
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const glowColor = isLight ? 'rgba(240, 90, 40,' : 'rgba(255, 59, 29,';
+
     // 2. K HARFİ HİZASI VE DİNAMİK ATEŞ GLOW
     gsap.fromTo('.project-main-title',
-      { filter: 'drop-shadow(0 0 0px rgba(255, 59, 29, 0))' },
+      { filter: `drop-shadow(0 0 0px ${glowColor} 0))` },
       { 
-        filter: 'drop-shadow(0 0 50px rgba(255, 59, 29, 1))',
+        filter: `drop-shadow(0 0 50px ${glowColor} 0.6))`,
         ease: 'none',
         scrollTrigger: {
           trigger: '.project-main-title',
@@ -253,8 +256,8 @@ onMounted(() => {
       scrollTrigger: {
         trigger: '.content-section',
         start: 'top 85%',
-        end: 'top -60%', // Çok asılmanız gerekecek (AĞIR ÇEKİM ETKİSİNİN ZİRVESİ)
-        scrub: 3.5 // 2.2'den 3.5'e çıkarıldı. Bal katar, ağır ağır gelir.
+        end: 'bottom 100%', // Animasyon, sayfanın altına inildiğinde %100 tamamlansın (Opacity yarım kalmasın)
+        scrub: 1 // Daha tepkisel ve pürüzsüz
       }
     });
 
@@ -281,7 +284,7 @@ onUnmounted(() => {
 .project-detail-page {
   position: relative;
   min-height: 200vh; /* Sticky kaydırma alanı olması için yükseklik arttı */
-  background: #0B0B0F; /* Dark-Tech Temel Arka Plan */
+  background: var(--dark-bg); /* Dark-Tech Temel Arka Plan */
 }
 
 /* === 1. HERO SLIDER EKRANI === */
@@ -305,7 +308,7 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  background: #000;
+  background: var(--dark-bg);
   overflow: hidden;
 }
 
@@ -323,7 +326,7 @@ onUnmounted(() => {
 .content-section {
   position: relative;
   z-index: 2; /* Slider'ın üzerine biniyor */
-  background: #0B0B0F; /* Temel arka plan rengimiz ile tam kapanır */
+  background: var(--dark-bg); /* Temel arka plan rengimiz ile tam kapanır */
   margin-top: 100vh; /* Ekranın 100%'ünü geçip slider'a aşağıdan eklenmesi için başlat noktası */
   padding-bottom: 120px;
 }
@@ -335,7 +338,7 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 150px;
-  background: linear-gradient(to bottom, transparent 0%, #0B0B0F 100%);
+  background: linear-gradient(to bottom, transparent 0%, var(--dark-bg) 100%);
   pointer-events: none; /* Tıklamayı engellememek için */
 }
 
@@ -347,17 +350,17 @@ onUnmounted(() => {
 .project-category {
   display: inline-flex;
   align-items: center;
-  color: #FFB000;
-  background: rgba(255, 176, 0, 0.1);
+  color: var(--accent);
+  background: var(--fire-glow-soft);
   padding: 8px 24px; /* Biraz daha hacimli */
   border-radius: 30px;
-  border: 1px solid rgba(255, 176, 0, 0.2);
+  border: 1px solid var(--fire-glow);
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 24px;
-  box-shadow: 0 0 20px rgba(255, 176, 0, 0.1);
+  box-shadow: 0 0 20px var(--fire-glow-soft);
 }
 
 .project-main-title {
@@ -365,11 +368,11 @@ onUnmounted(() => {
   font-weight: 800;
   line-height: 1.1;
   margin: 0;
-  background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%); /* Modern gri-beyaz gradient */
+  background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%); /* Modern gri-beyaz gradient */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(255, 59, 29, 0.6)); /* Ateş kırmızısı parlama (glow) efekti */
+  filter: drop-shadow(0 0 20px var(--fire-glow)); /* Ateş kırmızısı parlama (glow) efekti */
 }
 
 /* SWIPER Paginaton Kapsülü (Dribbble Tarzı) */
@@ -384,10 +387,10 @@ onUnmounted(() => {
   box-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
 :deep(.detail-hero-swiper .swiper-pagination-bullet-active) {
-  background: #FF3B1D; /* Ateş Kırmızı */
+  background: var(--primary); /* Ateş Kırmızı */
   width: 32px; /* Geniş çubuk */
   border-radius: 4px;
-  box-shadow: 0 0 15px rgba(255, 59, 29, 0.8), 0 0 30px rgba(255, 59, 29, 0.5);
+  box-shadow: 0 0 15px var(--fire-glow), 0 0 30px var(--fire-glow-soft);
 }
 
 
@@ -404,7 +407,7 @@ onUnmounted(() => {
 
 .section-heading {
   font-size: 1.75rem;
-  color: #FFF;
+  color: var(--text);
   margin-bottom: 30px;
   position: relative;
   display: inline-block;
@@ -417,7 +420,7 @@ onUnmounted(() => {
   left: 0;
   width: 50px;
   height: 4px;
-  background: linear-gradient(90deg, #FF3B1D, #FFB000);
+  background: linear-gradient(90deg, var(--primary), var(--accent));
   border-radius: 2px;
 }
 
@@ -432,8 +435,9 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   padding: 14px 28px;
-  background: rgba(25, 25, 30, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Rozetlere hafif derinlik */
   border-radius: 40px; /* Hap formunda yuvarlak */
   transition: translate 0.4s ease, 
               scale 0.4s ease,
@@ -451,16 +455,16 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 59, 29, 0.1), transparent);
+  background: linear-gradient(135deg, var(--fire-glow-soft), transparent);
   opacity: 0;
   transition: opacity 0.6s ease;
 }
 .tech-badge:hover {
   translate: 0 -8px; /* GSAP Transform'u bozmadan üstüne eklenir */
   scale: 1.02;
-  border-color: rgba(255, 59, 29, 0.5);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 59, 29, 0.2); 
-  background: rgba(30, 30, 35, 0.8);
+  border-color: var(--primary);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 0 20px var(--fire-glow-soft); 
+  background: var(--card-bg);
 }
 .tech-badge:hover::before {
   opacity: 1;
@@ -475,7 +479,7 @@ onUnmounted(() => {
 .tech-badge span {
   font-size: 1rem;
   font-weight: 600;
-  color: #E2E8F0;
+  color: var(--text);
   position: relative;
   z-index: 1;
   letter-spacing: 0.5px;
@@ -495,8 +499,9 @@ onUnmounted(() => {
 }
 
 .info-block {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); /* Kartların arkaplandan ayrışmasını sağlayan gölge */
   border-radius: 24px;
   padding: 40px 32px;
   transition: border-color 0.4s ease, box-shadow 0.4s ease, translate 0.4s ease;
@@ -513,15 +518,15 @@ onUnmounted(() => {
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(180deg, #FF3B1D, #FFB000);
+  background: linear-gradient(180deg, var(--primary), var(--accent));
   opacity: 0;
   transition: opacity 0.4s ease;
 }
 
 .info-block:hover {
   translate: 0 -8px; /* Yukarı doğru tatlıca kalkma */
-  border-color: rgba(255, 59, 29, 0.3); /* Turuncu yerine ateş kırmızısı vurgu */
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-color: var(--primary); /* Turuncu yerine ateş kırmızısı vurgu */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
 .info-block:hover::before {
@@ -538,25 +543,25 @@ onUnmounted(() => {
 .info-icon {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, #FF3B1D, #FFB000);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
   color: #FFF;
-  box-shadow: 0 10px 20px rgba(255, 59, 29, 0.25);
+  box-shadow: 0 10px 20px var(--fire-glow-soft);
 }
 
 .info-header h3 {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #FFF;
+  color: var(--text);
   margin: 0;
 }
 
 .info-text {
-  color: #94A3B8;
+  color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 1.85;
   margin: 0;
@@ -576,7 +581,7 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  color: #CBD5E1;
+  color: var(--text);
   font-size: 1.05rem;
   line-height: 1.6;
 }
@@ -597,22 +602,23 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   padding: 16px 36px;
-  background: transparent;
-  color: #CBD5E1;
+  background: var(--card-bg);
+  color: var(--text);
   font-size: 1.05rem;
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   border-radius: 50px;
   transition: border-color 0.4s, background 0.4s, color 0.4s, box-shadow 0.4s; /* Transform ve opacity'yi transition'dan çıkardık (GSAP kullanacak) */
   will-change: transform, opacity;
 }
 .btn-back:hover {
-  background: rgba(255, 59, 29, 0.05); /* Ateş kırmızısı hafif dokunuş */
-  border-color: rgba(255, 59, 29, 0.5);
-  color: #FFF;
+  background: var(--fire-glow-soft); /* Ateş kırmızısı hafif dokunuş */
+  border-color: var(--primary);
+  color: var(--hover-text-color);
   translate: -6px 0; /* Dinamik sola kayma */
-  box-shadow: 0 10px 25px rgba(255, 59, 29, 0.15);
+  box-shadow: 0 10px 25px var(--fire-glow-soft);
 }
 .btn-back i {
   transition: translate 0.4s ease;

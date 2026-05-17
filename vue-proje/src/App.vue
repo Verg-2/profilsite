@@ -151,12 +151,14 @@ onMounted(() => {
   if (theme.value === 'light') {
     document.documentElement.setAttribute('data-theme', 'light')
   }
-  refreshAnimations()
 })
 
 watch(() => route.fullPath, () => {
-  refreshAnimations()
-})
+  // Sayfa geçişlerinde DOM güncellendikten sonra animasyonları çalıştır
+  setTimeout(() => {
+    refreshAnimations()
+  }, 100)
+}, { immediate: true })
 
 onBeforeUnmount(() => {
   cleanupPageAnimations()

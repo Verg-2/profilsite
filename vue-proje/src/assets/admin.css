@@ -1,0 +1,367 @@
+/* 
+  Kadir Portfolio - Premium Admin Panel Design System 
+  Theme: Dark-Tech / Glassmorphism
+*/
+
+
+
+:root {
+  /* Core Colors */
+  --admin-bg: #09090b;
+  --admin-sidebar-bg: rgba(15, 15, 18, 0.7);
+  --admin-surface: rgba(22, 22, 26, 0.6);
+  --admin-surface-hover: rgba(35, 35, 42, 0.8);
+  
+  /* Accents - More Vibrant! */
+  --admin-primary: #ff3300;
+  --admin-primary-glow: rgba(255, 51, 0, 0.5);
+  --admin-secondary: #ffb703;
+  --admin-secondary-glow: rgba(255, 183, 3, 0.4);
+  --admin-success: #10b981;
+  --admin-danger: #ef4444;
+
+  /* Typography */
+  --admin-heading: #fff;
+  --admin-text-main: #f3f4f6;
+  --admin-text-muted: #9ca3af;
+  --admin-text-dark: #4b5563;
+  
+  /* Inputs & Buttons */
+  --admin-btn-primary-bg: #ffffff;
+  --admin-btn-primary-text: #000000;
+  --admin-btn-primary-hover: #e5e5e5;
+  --admin-input-bg: rgba(0, 0, 0, 0.4);
+  --admin-input-focus: rgba(0, 0, 0, 0.6);
+
+  /* Borders & Shadows */
+  --admin-border: rgba(255, 255, 255, 0.08);
+  --admin-border-focus: rgba(255, 85, 0, 0.5);
+  --admin-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --admin-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  --admin-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  --admin-success: #28a745;
+  --admin-warning: #ffc107;
+  --admin-radius: 8px;
+  --admin-radius-md: 12px;
+  --admin-transition: all 0.3s ease;
+}
+
+/* SweetAlert2 Koyu Tema Özelleştirmeleri */
+.swal2-dark-popup {
+  border: 1px solid var(--admin-border) !important;
+  border-radius: var(--admin-radius-md) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.swal2-dark-title {
+  font-family: inherit !important;
+  font-size: 1.5rem !important;
+}
+
+.swal2-dark-confirm {
+  border-radius: 6px !important;
+  padding: 10px 24px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 4px 15px rgba(255, 77, 0, 0.3) !important;
+}
+
+.swal2-dark-cancel {
+  border-radius: 6px !important;
+  padding: 10px 24px !important;
+  font-weight: 600 !important;
+}
+
+/* Base resets for admin panel to isolate from main site */
+.admin-app {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--admin-bg);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(255, 51, 0, 0.05), transparent 30%),
+    radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.03), transparent 30%);
+  color: var(--admin-text-main);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Glassmorphism Utilities */
+.admin-glass {
+  background: var(--admin-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-glass-shadow);
+}
+
+.admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  padding: 2rem;
+  transition: var(--admin-transition);
+  position: relative;
+  /* overflow: hidden kaldırıldı çünkü dropdown'ların (örn: IconPicker) taşmasını engelliyor */
+}
+
+.admin-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--admin-primary), transparent);
+  opacity: 0;
+  transition: var(--admin-transition);
+}
+
+.admin-card:hover::before {
+  opacity: 1;
+}
+
+/* Typography */
+.admin-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  color: var(--admin-heading);
+}
+
+.admin-subtitle {
+  font-size: 0.95rem;
+  color: var(--admin-text-muted);
+  margin-bottom: 2rem;
+}
+
+/* Buttons */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--admin-radius-md);
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--admin-transition);
+  border: none;
+  outline: none;
+}
+
+.admin-btn-primary {
+  background: var(--admin-btn-primary-bg);
+  color: var(--admin-btn-primary-text);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid transparent;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-btn-primary:hover {
+  background: var(--admin-btn-primary-hover);
+  color: var(--admin-btn-primary-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+
+.admin-btn-secondary {
+  background: var(--admin-btn-secondary-bg, rgba(255, 255, 255, 0.05));
+  color: var(--admin-text-main);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-btn-secondary:hover {
+  background: var(--admin-btn-secondary-hover, rgba(255, 255, 255, 0.1));
+  border-color: var(--admin-border-focus);
+}
+
+.admin-btn-ai {
+  background: linear-gradient(135deg, #ff4500, #ff8c00);
+  color: #ffffff !important;
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-btn-ai:hover {
+  background: linear-gradient(135deg, #ff5722, #ffa500);
+  box-shadow: 0 6px 20px rgba(255, 69, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.admin-btn-ai:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Inputs & Forms */
+.admin-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.admin-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-input {
+  width: 100%;
+  background: var(--admin-input-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  padding: 0.875rem 1rem;
+  color: var(--admin-text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: var(--admin-transition);
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.15);
+  background: var(--admin-input-focus);
+}
+
+textarea.admin-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Custom Scrollbar for Admin */
+.admin-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.admin-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.admin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.admin-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-primary);
+}
+
+/* Loading Spinner */
+.admin-loader {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-left-color: var(--admin-primary);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: admin-spin 1s linear infinite;
+}
+
+@keyframes admin-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+  --admin-bg: #f8f6f2;
+  --admin-sidebar-bg: rgba(255, 255, 255, 0.8);
+  --admin-surface: rgba(255, 255, 255, 0.85);
+  --admin-surface-hover: rgba(240, 240, 245, 0.95);
+  
+  --admin-primary: #f05a28;
+  --admin-primary-glow: rgba(240, 90, 40, 0.25);
+  --admin-secondary: #ff845e;
+  --admin-secondary-glow: rgba(255, 132, 94, 0.25);
+  
+  --admin-heading: #111;
+  --admin-text-main: #2a2724;
+  --admin-text-muted: #5c5651;
+  --admin-text-dark: #f3f4f6; /* Inverted for light mode */
+  
+  --admin-btn-primary-bg: #111111;
+  --admin-btn-primary-text: #ffffff;
+  --admin-btn-primary-hover: #333333;
+  --admin-btn-secondary-bg: rgba(0, 0, 0, 0.03);
+  --admin-btn-secondary-hover: rgba(0, 0, 0, 0.08);
+  
+  --admin-input-bg: rgba(255, 255, 255, 0.9);
+  --admin-input-focus: #ffffff;
+  
+  --admin-border: #c4beb5;
+  --admin-border-focus: rgba(240, 90, 40, 0.5);
+  --admin-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --admin-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  --admin-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive Grid Utilities for Admin Panel */
+.admin-grid-1-2 {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.admin-grid-2-1 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.admin-grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .admin-grid-1-2,
+  .admin-grid-2-1,
+  .admin-grid-2-col {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .admin-page-header > div:last-child {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .admin-card {
+    padding: 1.25rem;
+  }
+  
+  .admin-title {
+    font-size: 1.4rem;
+  }
+}

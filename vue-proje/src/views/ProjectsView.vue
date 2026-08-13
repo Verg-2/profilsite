@@ -3,60 +3,41 @@
     <canvas id="particles-canvas"></canvas>
 
     <header class="page-header">
-      <h1>Projelerim</h1>
-      <p>Yaptığım ve üzerinde çalıştığım projeler. Her biri özenle tasarlanmış ve geliştirilmiştir.</p>
+      <h1>{{ lang === 'en' ? 'My Projects' : 'Projelerim' }}</h1>
+      <p>{{ lang === 'en' ? 'Projects I have worked on and completed. Each is carefully designed and developed.' : 'Yaptığım ve üzerinde çalıştığım projeler. Her biri özenle tasarlanmış ve geliştirilmiştir.' }}</p>
     </header>
 
     <main class="projects-container">
-      <div class="filter-bar">
-        <button class="filter-btn" :class="{ active: currentFilter === 'Tümü' }" @click="currentFilter = 'Tümü'"><span>Tümü</span></button>
-        <button class="filter-btn" :class="{ active: currentFilter === 'Web' }" @click="currentFilter = 'Web'"><span>Web</span></button>
-        <button class="filter-btn" :class="{ active: currentFilter === 'Mobil' }" @click="currentFilter = 'Mobil'"><span>Mobil</span></button>
-        <button class="filter-btn" :class="{ active: currentFilter === 'Tasarım' }" @click="currentFilter = 'Tasarım'"><span>Tasarım</span></button>
+      <!-- MASAÜSTÜ FİLTRELEME (Hap Tasarım) -->
+      <div class="filter-bar desktop-filters">
+        <button class="filter-btn" :class="{ active: currentFilter === 'Tümü' }" @click="currentFilter = 'Tümü'"><span>{{ lang === 'en' ? 'All' : 'Tümü' }}</span></button>
+        <button v-for="cat in categories" :key="cat.id" class="filter-btn" :class="{ active: currentFilter === cat.name }" @click="currentFilter = cat.name">
+          <span><i v-if="cat.icon" :class="cat.icon" style="margin-right: 4px;"></i>{{ lang === 'en' && cat.nameEn ? cat.nameEn : cat.name }}</span>
+        </button>
       </div>
 
-      <div class="projects-grid">
-        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Web'">
-          <div class="project-image swiper-image-container">
-            <Swiper
-              @swiper="(swiper) => setSwiperRef(0, swiper)"
-              :modules="[Pagination, EffectCreative]"
-              :slides-per-view="1"
-              :loop="true"
-              :pagination="{ clickable: true, dynamicBullets: true }"
-              :effect="'creative'"
-              :creativeEffect="{
-                prev: { shadow: true, translate: ['-20%', 0, -1] },
-                next: { translate: ['100%', 0, 0] },
-              }"
-              :speed="800"
-              class="project-swiper"
-            >
-              <SwiperSlide v-for="(img, idx) in portfolioImages" :key="idx">
-                <div class="slide-inner">
-                  <img :src="img" alt="Kişisel Portföy Ekran Görüntüsü" class="swiper-slide-img" />
-                  <div class="slide-overlay"></div>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">Kişisel Portföy Sitesi</h3>
-            <p class="project-desc">Modern ve responsive tasarıma sahip kişisel portföy web sitesi.</p>
-            <div class="project-tags">
-              <span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span>
+      <!-- MOBİL FİLTRELEME (Custom Dropdown Tasarımı) -->
+      <div class="mobile-filters">
+        <div class="custom-dropdown" :class="{ 'is-open': isDropdownOpen }" @click="toggleDropdown">
+          <i class="fa-solid fa-layer-group filter-icon"></i>
+          <span class="selected-text">{{ currentFilter === 'Tümü' ? (lang === 'en' ? 'All Categories' : 'Tüm Kategoriler') : (lang === 'en' && categories.find(c => c.name === currentFilter)?.nameEn ? categories.find(c => c.name === currentFilter).nameEn : currentFilter) }}</span>
+          <i class="fa-solid fa-chevron-down arrow-icon" :style="{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0)' }"></i>
+          
+          <transition name="dropdown">
+            <div class="dropdown-menu" v-if="isDropdownOpen">
+              <div class="dropdown-item" :class="{ active: currentFilter === 'Tümü' }" @click.stop="selectCategory('Tümü')">{{ lang === 'en' ? 'All Categories' : 'Tüm Kategoriler' }}</div>
+              <div v-for="cat in categories" :key="cat.id" class="dropdown-item" :class="{ active: currentFilter === cat.name }" @click.stop="selectCategory(cat.name)">{{ lang === 'en' && cat.nameEn ? cat.nameEn : cat.name }}</div>
             </div>
-            <router-link to="/proje/kisisel-portfoy" class="project-link">Projeyi Görüntüle →</router-link>
-          </div>
-        </article>
+          </transition>
+        </div>
+      </div>
 
-        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Web'">
+      <div class="projects-grid" v-if="projects.length > 0">
+        <article class="project-card fade-in" v-for="(project, index) in filteredProjects" :key="project.id + '-' + currentFilter">
           <div class="project-image swiper-image-container">
             <Swiper
-              @swiper="(swiper) => setSwiperRef(1, swiper)"
-              :modules="[Pagination, EffectCreative]"
-              :slides-per-view="1"
               :loop="true"
+              @swiper="onSwiperInit"
               :pagination="{ clickable: true, dynamicBullets: true }"
               :effect="'creative'"
               :creativeEffect="{
@@ -64,238 +45,169 @@
                 next: { translate: ['100%', 0, 0] },
               }"
               :speed="800"
+              :observer="true"
+              :observeParents="true"
               class="project-swiper"
             >
-              <SwiperSlide v-for="(img, idx) in ecommerceImages" :key="idx">
+              <SwiperSlide v-for="(img, idx) in getSliderImages(project)" :key="idx">
                 <div class="slide-inner">
-                  <img :src="img" alt="E-Ticaret Ekran Görüntüsü" class="swiper-slide-img" />
+                  <!-- Skeleton ve Lazy Load CLS Önlemi -->
+                  <img :src="getFullUrl(img)" :alt="project.imageAltText || project.title" loading="lazy" style="aspect-ratio: 16/9; background-color: rgba(255, 255, 255, 0.05);" class="swiper-slide-img" />
                   <div class="slide-overlay"></div>
                 </div>
               </SwiperSlide>
             </Swiper>
           </div>
           <div class="project-content">
-            <h3 class="project-title">E-Ticaret Platformu</h3>
-            <p class="project-desc">Tam kapsamlı e-ticaret çözümü.</p>
-            <div class="project-tags"><span class="project-tag">Vue.js</span><span class="project-tag">Node.js</span></div>
-            <router-link to="/proje/e-ticaret" class="project-link">Projeyi Görüntüle →</router-link>
+            <h3 class="project-title">{{ lang === 'en' && project.titleEn ? project.titleEn : project.title }}</h3>
+            <p class="project-desc">{{ lang === 'en' && project.summaryEn ? project.summaryEn : project.summary }}</p>
+            <div class="project-tags">
+              <span class="project-tag" v-for="tag in project.techTags" :key="tag">{{ tag.includes('|') ? tag.split('|')[1] : tag }}</span>
+            </div>
+            <router-link :to="'/proje/' + project.id" class="btn btn-secondary card-action-btn">{{ lang === 'en' ? 'View Project →' : 'Projeyi Görüntüle →' }}</router-link>
           </div>
         </article>
-
-        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Mobil'">
-          <div class="project-image swiper-image-container">
-            <Swiper
-              @swiper="(swiper) => setSwiperRef(2, swiper)"
-              :modules="[Pagination, EffectCreative]"
-              :slides-per-view="1"
-              :loop="true"
-              :pagination="{ clickable: true, dynamicBullets: true }"
-              :effect="'creative'"
-              :creativeEffect="{
-                prev: { shadow: true, translate: ['-20%', 0, -1] },
-                next: { translate: ['100%', 0, 0] },
-              }"
-              :speed="800"
-              class="project-swiper"
-            >
-              <SwiperSlide v-for="(img, idx) in bankImages" :key="idx">
-                <div class="slide-inner">
-                  <img :src="img" alt="Mobil Banka Ekran Görüntüsü" class="swiper-slide-img" />
-                  <div class="slide-overlay"></div>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">Mobil Banka Uygulaması</h3>
-            <p class="project-desc">Cross-platform mobil banka uygulaması.</p>
-            <div class="project-tags"><span class="project-tag">React Native</span></div>
-            <router-link to="/proje/mobil-banka" class="project-link">Projeyi Görüntüle →</router-link>
-          </div>
-        </article>
-
-        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Web'">
-          <div class="project-image swiper-image-container">
-            <Swiper
-              @swiper="(swiper) => setSwiperRef(3, swiper)"
-              :modules="[Pagination, EffectCreative]"
-              :slides-per-view="1"
-              :loop="true"
-              :pagination="{ clickable: true, dynamicBullets: true }"
-              :effect="'creative'"
-              :creativeEffect="{
-                prev: { shadow: true, translate: ['-20%', 0, -1] },
-                next: { translate: ['100%', 0, 0] },
-              }"
-              :speed="800"
-              class="project-swiper"
-            >
-              <SwiperSlide v-for="(img, idx) in taskImages" :key="idx">
-                <div class="slide-inner">
-                  <img :src="img" alt="Görev API Ekran Görüntüsü" class="swiper-slide-img" />
-                  <div class="slide-overlay"></div>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">Görev Yönetim App</h3>
-            <p class="project-desc">Kişisel görev listesi uygulaması.</p>
-            <div class="project-tags"><span class="project-tag">Vue.js</span></div>
-            <router-link to="/proje/gorev-yonetim" class="project-link">Projeyi Görüntüle →</router-link>
-          </div>
-        </article>
-
-        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Tasarım'">
-          <div class="project-image swiper-image-container">
-            <Swiper
-              @swiper="(swiper) => setSwiperRef(4, swiper)"
-              :modules="[Pagination, EffectCreative]"
-              :slides-per-view="1"
-              :loop="true"
-              :pagination="{ clickable: true, dynamicBullets: true }"
-              :effect="'creative'"
-              :creativeEffect="{
-                prev: { shadow: true, translate: ['-20%', 0, -1] },
-                next: { translate: ['100%', 0, 0] },
-              }"
-              :speed="800"
-              class="project-swiper"
-            >
-              <SwiperSlide v-for="(img, idx) in uiuxImages" :key="idx">
-                <div class="slide-inner">
-                  <img :src="img" alt="UI/UX Tasarım Ekranı" class="swiper-slide-img" />
-                  <div class="slide-overlay"></div>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">UI/UX Tasarım Seti</h3>
-            <p class="project-desc">Modern web siteleri için UI bileşenleri.</p>
-            <div class="project-tags"><span class="project-tag">Figma</span></div>
-            <router-link to="/proje/ui-ux" class="project-link">Projeyi Görüntüle →</router-link>
-          </div>
-        </article>
-
-        <article class="project-card fade-in" v-show="currentFilter === 'Tümü' || currentFilter === 'Mobil'">
-          <div class="project-image swiper-image-container">
-            <Swiper
-              @swiper="(swiper) => setSwiperRef(5, swiper)"
-              :modules="[Pagination, EffectCreative]"
-              :slides-per-view="1"
-              :loop="true"
-              :pagination="{ clickable: true, dynamicBullets: true }"
-              :effect="'creative'"
-              :creativeEffect="{
-                prev: { shadow: true, translate: ['-20%', 0, -1] },
-                next: { translate: ['100%', 0, 0] },
-              }"
-              :speed="800"
-              class="project-swiper"
-            >
-              <SwiperSlide v-for="(img, idx) in chatImages" :key="idx">
-                <div class="slide-inner">
-                  <img :src="img" alt="Sohbet App Ekranı" class="swiper-slide-img" />
-                  <div class="slide-overlay"></div>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">Sohbet Uygulaması</h3>
-            <p class="project-desc">Real-time sohbet uygulaması.</p>
-            <div class="project-tags"><span class="project-tag">Flutter</span></div>
-            <router-link to="/proje/sohbet-app" class="project-link">Projeyi Görüntüle →</router-link>
-          </div>
-        </article>
+      </div>
+      <div v-else class="text-center" style="padding: 2rem; color: #888;">
+        <p>{{ lang === 'en' ? 'No projects added yet.' : 'Henüz proje eklenmemiş.' }}</p>
       </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount, inject } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, EffectCreative } from 'swiper/modules';
+import api from '@/services/api';
+import defaultImg from '@/assets/img/wolff.png';
+
+const lang = inject('lang', ref('tr'));
 
 const currentFilter = ref('Tümü');
+const categories = ref([]);
+const currentTheme = ref(document.documentElement.getAttribute('data-theme') || 'dark');
+let themeObserver = null;
+
+const isDropdownOpen = ref(false);
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
+const selectCategory = (catName) => {
+  currentFilter.value = catName;
+  isDropdownOpen.value = false;
+};
+
+const projects = ref([]);
+
+const swiperInstances = ref([]);
+let globalSlideInterval = null;
+
+const onSwiperInit = (swiper) => {
+  swiperInstances.value.push(swiper);
+};
+
+const startGlobalSlider = () => {
+  if (globalSlideInterval) clearInterval(globalSlideInterval);
+  let currentCardIndex = 0;
+  
+  globalSlideInterval = setInterval(() => {
+    if (swiperInstances.value.length === 0) return;
+    
+    // Geçerli kartın swiper'ını al
+    const swiper = swiperInstances.value[currentCardIndex];
+    if (swiper && !swiper.destroyed) {
+      swiper.slideNext();
+    }
+    
+    // Bir sonraki karta geç, sona gelirse başa dön
+    currentCardIndex = (currentCardIndex + 1) % swiperInstances.value.length;
+  }, 1200); // Her 1.2 saniyede bir sonraki kart kayar
+};
+
+watch(currentFilter, async () => {
+  await nextTick();
+  // Filtre değişince swiper listesini sıfırla ve yeniden topla
+  swiperInstances.value = [];
+  
+  setTimeout(() => {
+    const elements = document.querySelectorAll('.projects-grid .fade-in');
+    elements.forEach(el => el.classList.add('visible'));
+  }, 50);
+});
+
+const getFullUrl = (url) => {
+  if (!url) return defaultImg;
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  return api.defaults.baseURL.replace('/api', '') + url;
+}
+
+const getSliderImages = (project) => {
+  let targetArray = project.imageUrls || [];
+  if (currentTheme.value === 'light' && project.lightImageUrls && project.lightImageUrls.length > 0) {
+    targetArray = project.lightImageUrls;
+  } else if (currentTheme.value === 'dark' && project.darkImageUrls && project.darkImageUrls.length > 0) {
+    targetArray = project.darkImageUrls;
+  }
+  
+  let images = targetArray.length > 0 ? [...targetArray] : [defaultImg];
+  // Eğer sadece 1 görsel varsa, slider efekti çalışsın diye onu çoğaltıyoruz.
+  if (images.length === 1) {
+    images.push(images[0]);
+    images.push(images[0]); // 3 tane olsun ki slider güzel dönsün
+  }
+  return images;
+}
+
+const fetchProjects = async () => {
+  try {
+    const [projRes, catRes] = await Promise.all([
+      api.get('/Projects'),
+      api.get('/Projects/categories')
+    ]);
+    projects.value = projRes.data.map(p => {
+      p.category = catRes.data.find(c => c.id === p.projectCategoryId);
+      return p;
+    });
+    categories.value = catRes.data;
+    
+    // Veriler yüklendikten sonra slider döngüsünü başlat
+    setTimeout(() => {
+      startGlobalSlider();
+      
+      // İlk açılışta kartların görünür olmasını sağla
+      const elements = document.querySelectorAll('.projects-grid .fade-in');
+      elements.forEach(el => el.classList.add('visible'));
+    }, 500);
+  } catch (error) {
+    console.error("Projeler ve kategoriler yüklenirken hata oluştu", error);
+  }
+}
+
+// Komponent yok edildiğinde interval'i temizle
+onBeforeUnmount(() => {
+  if (globalSlideInterval) clearInterval(globalSlideInterval);
+  if (themeObserver) themeObserver.disconnect();
+});
+
+onMounted(() => {
+  themeObserver = new MutationObserver(() => {
+    currentTheme.value = document.documentElement.getAttribute('data-theme') || 'dark';
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  fetchProjects();
+});
+
+const filteredProjects = computed(() => {
+  if (currentFilter.value === 'Tümü') return projects.value;
+  return projects.value.filter(p => p.category?.name === currentFilter.value); 
+});
 
 // Swiper Stilleri
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-creative';
-
-// Swiper instancelarını tutacağımız dizi ve fonksiyon
-const swipers = ref([]);
-const setSwiperRef = (index, swiper) => {
-  swipers.value[index] = swiper;
-};
-
-let autoSlideInterval = null;
-let currentSwiperIndex = 0;
-
-onMounted(() => {
-  // Her 2.5 saniyede bir, sistem sadece tek bir karttaki slider'ı kaydırır
-  // Sıra sürekli 1 -> 2 -> 3 -> ... -> 6 -> 1 olarak devirdaim yapar.
-  autoSlideInterval = setInterval(() => {
-    if (swipers.value.length > 0) {
-      const swiper = swipers.value[currentSwiperIndex];
-      
-      // Eğer bu kartın swiper'ı sorunsuz yüklendiyse slaytı kaydırır
-      if (swiper && !swiper.destroyed) {
-        swiper.slideNext();
-      }
-      
-      // Bir sonraki tura diğer karta geçmesi için indeksi artırıyoruz
-      currentSwiperIndex++;
-      if (currentSwiperIndex >= swipers.value.length) {
-        currentSwiperIndex = 0; // Sona ulaştıysa başa sar
-      }
-    }
-  }, 1200); // Akış hızı (1.2 saniye - Daha hızlı akış)
-});
-
-onUnmounted(() => {
-  // Bileşen (sayfa) yok edilirken temizle (performans opt.)
-  if (autoSlideInterval) {
-    clearInterval(autoSlideInterval);
-  }
-});
-
-// Örnek ekran görüntüleri (Portföy sitenize ait resim yollarıyla değiştirebilirsiniz)
-const portfolioImages = ref([
-  'https://picsum.photos/id/1018/600/400',
-  'https://picsum.photos/id/1019/600/400',
-  'https://picsum.photos/id/1020/600/400'
-]);
-
-const ecommerceImages = ref([
-  'https://picsum.photos/id/1021/600/400',
-  'https://picsum.photos/id/1022/600/400'
-]);
-
-const bankImages = ref([
-  'https://picsum.photos/id/1023/600/400',
-  'https://picsum.photos/id/1024/600/400'
-]);
-
-const taskImages = ref([
-  'https://picsum.photos/id/1025/600/400',
-  'https://picsum.photos/id/1026/600/400'
-]);
-
-const uiuxImages = ref([
-  'https://picsum.photos/id/1027/600/400',
-  'https://picsum.photos/id/1028/600/400'
-]);
-
-const chatImages = ref([
-  'https://picsum.photos/id/1029/600/400',
-  'https://picsum.photos/id/1031/600/400'
-]);
-
-// Animasyonlar page-animations.js ile yönetiliyor
 </script>
 
 <style scoped>

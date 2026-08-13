@@ -1,32 +1,43 @@
 <template>
-  <div class="app-wrapper">
+  <div v-if="isAdminRoute" class="h-screen w-full bg-gray-900 text-gray-100">
+    <router-view />
+  </div>
+
+  <div v-else class="app-wrapper">
     <!-- Desktop Navbar -->
     <nav class="navbar desktop-nav">
       <div class="navbar-inner">
         <router-link to="/" class="logo">Kadir</router-link>
 
-        <button
-          class="menu-toggle"
-          type="button"
-          :aria-expanded="isMenuOpen ? 'true' : 'false'"
-          aria-label="Menüyü aç/kapat"
-          @click="isMenuOpen = !isMenuOpen"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        <div class="nav-right" style="display: flex; align-items: center;">
+          <ul class="nav-links" :class="{ open: isMenuOpen }" @click="isMenuOpen = false">
+            <li v-for="link in desktopLinks" :key="link.path">
+              <router-link :to="link.path">{{ link.name }}</router-link>
+            </li>
+          </ul>
 
-        <ul class="nav-links" :class="{ open: isMenuOpen }" @click="isMenuOpen = false">
-          <li v-for="link in desktopLinks" :key="link.path">
-            <router-link :to="link.path">{{ link.name }}</router-link>
-          </li>
-          <li>
+          <div class="header-actions" style="display: flex; align-items: center; gap: 15px; margin-left: 1.5rem;">
+            <button @click.stop="toggleLang" class="theme-toggle-btn" aria-label="Dili Değiştir" style="font-size: 0.9rem; font-weight: bold;">
+              {{ lang === 'en' ? 'EN' : 'TR' }}
+            </button>
             <button @click.stop="toggleTheme" class="theme-toggle-btn" aria-label="Temayı Değiştir">
               <i :class="theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon'"></i>
             </button>
-          </li>
-        </ul>
+          </div>
+
+          <button
+            class="menu-toggle"
+            type="button"
+            :aria-expanded="isMenuOpen ? 'true' : 'false'"
+            aria-label="Menüyü aç/kapat"
+            @click="isMenuOpen = !isMenuOpen"
+            style="margin-left: 15px;"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -45,12 +56,6 @@
         <span class="label">{{ link.name }}</span>
       </router-link>
 
-      <button @click="toggleTheme" class="nav-item theme-nav-btn" aria-label="Temayı Değiştir">
-        <div class="icon-wrapper">
-          <i :class="theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon'"></i>
-        </div>
-        <span class="label">Tema</span>
-      </button>
     </nav>
 
     <!-- Aktif route'un bileşeni burada gösterilir. -->
@@ -59,34 +64,84 @@
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, watch, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, watch, ref, computed, provide } from 'vue'
 import { useRoute } from 'vue-router'
-import '@/assets/style.css'
 import { cleanupPageAnimations, initPageAnimations } from '@/assets/js/page-animations'
+import api from '@/services/api'
 
 const route = useRoute()
+const isAdminRoute = ref(window.location.pathname.startsWith('/admin'))
+
+watch(() => route.path, (newPath) => {
+  isAdminRoute.value = newPath.startsWith('/admin')
+})
 const isMenuOpen = ref(false)
 const theme = ref(localStorage.getItem('theme') || 'dark')
+const lang = ref(localStorage.getItem('lang') || 'tr')
+provide('lang', lang)
+
+const toggleLang = () => {
+  lang.value = lang.value === 'tr' ? 'en' : 'tr'
+  localStorage.setItem('lang', lang.value)
+}
+
+const homeSettings = ref(null)
+
+const emojiToCursor = (emoji) => {
+  if (!emoji) return 'auto';
+  if (emoji.startsWith('http') || emoji.startsWith('/') || emoji.startsWith('data:')) {
+    return `url('${emoji}') 16 16, auto`;
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text y="24" font-size="24">${emoji}</text></svg>`;
+  const dataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  return `url('${dataUrl}') 16 16, auto`;
+}
+
+const applyCursor = () => {
+  if (!homeSettings.value) return;
+  const cursorVal = theme.value === 'dark' ? homeSettings.value.darkCursor : homeSettings.value.lightCursor;
+  let styleEl = document.getElementById('custom-cursor-style');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'custom-cursor-style';
+    document.head.appendChild(styleEl);
+  }
+  
+  if (cursorVal && cursorVal.trim() !== '') {
+    const cursorCss = emojiToCursor(cursorVal.trim());
+    styleEl.innerHTML = `
+      * {
+        cursor: ${cursorCss} !important;
+      }
+    `;
+  } else {
+    styleEl.innerHTML = '';
+  }
+}
+
+watch(theme, () => {
+  applyCursor()
+})
 
 // Masaüstü için tam liste
-const desktopLinks = [
-  { name: 'Anasayfa', path: '/' },
-  { name: 'Hakkında', path: '/hakkinda' },
-  { name: 'Blog', path: '/blog' },
-  { name: 'Yetenekler', path: '/yetenekler' },
-  { name: 'Projeler', path: '/projects' },
-  { name: 'İletişim', path: '/contact' }
-]
+const desktopLinks = computed(() => [
+  { name: lang.value === 'en' ? 'Home' : 'Anasayfa', path: '/' },
+  { name: lang.value === 'en' ? 'About' : 'Hakkında', path: '/hakkinda' },
+  { name: lang.value === 'en' ? 'Blog' : 'Blog', path: '/blog' },
+  { name: lang.value === 'en' ? 'Skills' : 'Yetenekler', path: '/yetenekler' },
+  { name: lang.value === 'en' ? 'Projects' : 'Projeler', path: '/projects' },
+  { name: lang.value === 'en' ? 'Contact' : 'İletişim', path: '/contact' }
+])
 
-// Mobil için 6 link + Tema Butonu (Anasayfa tam ortada olacak şekilde ayarlandı)
-const mobileLinks = [
-  { name: 'Hakkında', path: '/hakkinda', icon: 'ph ph-user' },
-  { name: 'Blog', path: '/blog', icon: 'ph ph-article' },
-  { name: 'Yetenekler', path: '/yetenekler', icon: 'ph ph-lightning' },
-  { name: 'Anasayfa', path: '/', icon: 'ph ph-house' }, // Ortada (Index 3)
-  { name: 'Projeler', path: '/projects', icon: 'ph ph-code' },
-  { name: 'İletişim', path: '/contact', icon: 'ph ph-envelope-simple' }
-]
+// Mobil için linkler
+const mobileLinks = computed(() => [
+  { name: lang.value === 'en' ? 'About' : 'Hakkında', path: '/hakkinda', icon: 'ph ph-user' },
+  { name: lang.value === 'en' ? 'Blog' : 'Blog', path: '/blog', icon: 'ph ph-article' },
+  { name: lang.value === 'en' ? 'Skills' : 'Yetenekler', path: '/yetenekler', icon: 'ph ph-lightning' },
+  { name: lang.value === 'en' ? 'Home' : 'Anasayfa', path: '/', icon: 'ph ph-house' }, 
+  { name: lang.value === 'en' ? 'Projects' : 'Projeler', path: '/projects', icon: 'ph ph-code' },
+  { name: lang.value === 'en' ? 'Contact' : 'İletişim', path: '/contact', icon: 'ph ph-envelope-simple' }
+])
 
 function toggleTheme(event) {
   const switchTheme = () => {
@@ -147,9 +202,26 @@ async function refreshAnimations() {
   initPageAnimations()
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (theme.value === 'light') {
     document.documentElement.setAttribute('data-theme', 'light')
+  }
+
+  try {
+    const res = await api.get('/HomeSettings')
+    if (res.data) {
+      homeSettings.value = res.data
+      applyCursor()
+    }
+  } catch (err) {
+    console.error('Home settings yüklenemedi:', err)
+  }
+
+  // Ziyaretçi takibi (Session bazlı, her oturumda 1 kez sayılır)
+  if (!sessionStorage.getItem('visited')) {
+    api.post('/Analytics/track-visit').then(() => {
+      sessionStorage.setItem('visited', 'true')
+    }).catch(err => console.error('Visit track error:', err))
   }
 })
 
@@ -172,27 +244,33 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
-/* Tema Butonu Masaüstü Stili */
 .theme-toggle-btn {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text);
   font-size: 1.2rem;
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  margin-left: 1rem;
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-left: 0;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
 }
-.theme-toggle-btn:hover {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .theme-toggle-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+}
+.theme-toggle-btn:active {
+  transform: translateY(0) scale(0.92);
 }
 .theme-nav-btn {
   background: transparent;
@@ -320,4 +398,41 @@ onBeforeUnmount(() => {
 }
 
 
+
+
+/* =========================================
+   320px ve Küçük Ekranlar (Alta taşma ve sıkışma düzeltmesi)
+   ========================================= */
+@media (max-width: 400px) {
+  .mobile-bottom-nav {
+    height: 65px;
+    padding: 0 0.2rem;
+    bottom: 0.8rem;
+    width: calc(100% - 1rem);
+  }
+  
+  .mobile-bottom-nav .nav-item {
+    min-width: 0;
+  }
+
+  .icon-wrapper {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
+
+  .label {
+    font-size: 0.55rem;
+    bottom: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .nav-item.active .icon-wrapper {
+    transform: translateY(-18px);
+  }
+}
 </style>
+

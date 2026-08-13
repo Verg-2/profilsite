@@ -1,4 +1,4 @@
-﻿# IDEs
+# IDEs
 .idea/
 .vscode/
 
@@ -8,3 +8,19 @@ node_modules/
 # OS Logs
 .DS_Store
 Thumbs.db
+
+# Temp and Local Folders
+_temp_data/
+TestGemini/
+_docs/
+_scripts/
+
+# Sensitive and Backup Files
+backup.sql
+.env
+*.env
+*.env.local
+
+# Database Data
+kadirportfolio_db/
+pg_data/

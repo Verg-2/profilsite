@@ -3,27 +3,27 @@
   <section class="hero" id="hero">
     <canvas id="fire-canvas" ref="fireCanvas"></canvas>
     <div class="hero-content">
-        <div class="hero-text">
-          <p class="greeting">Merhaba, ben</p>
+        <div class="hero-text" v-if="settings">
           <h1 class="hero-title">
-            <span class="highlight">Kadir</span><br />
-            Backend Developer
+            <div v-if="preTitle" class="hero-pre-title">{{ preTitle }}</div>
+            <span class="highlight">{{ heroTitle?.split('|')[0] }}</span><br v-if="heroTitle?.includes('|')">
+            <span class="hero-profession" v-if="heroTitle?.includes('|')" v-safe-html="heroTitle.split('|')[1]"></span>
           </h1>
           <p class="hero-subtitle">
-            Modern web uygulamalarının arkasında çalışan güçlü backend sistemleri geliştiriyorum. Temiz ve sürdürülebilir kod yazmaya, güvenli ve ölçeklenebilir mimariler oluşturmaya önem veriyorum. Amacım, kullanıcıların fark etmese bile sorunsuz çalışan hızlı ve güvenilir sistemler oluşturmak.
+            {{ heroSubtitle }}
           </p>
           <div class="hero-buttons">
-            <router-link to="/projects" class="btn btn-primary">
-              <span>Projelerim</span>
+            <router-link :to="settings.buttonUrl || '/projects'" class="btn btn-secondary" v-if="buttonText">
+              <span>{{ buttonText }}</span>
             </router-link>
-            <router-link to="/contact" class="btn btn-secondary">
-              <span>İletişim</span>
+            <router-link :to="settings.secondaryButtonUrl || '/contact'" class="btn btn-secondary" v-if="secondaryButtonText">
+              <span>{{ secondaryButtonText }}</span>
             </router-link>
           </div>
         </div>
-        <div class="hero-image">
+        <div class="hero-image" v-if="settings">
           <div class="image-frame" ref="tiltRef">
-            <img src="@/assets/img/wolff.png" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
+            <img :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
             <div class="image-glow" id="image-glow"></div>
           </div>
         </div>
@@ -32,16 +32,53 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed, nextTick, inject } from 'vue'
 import VanillaTilt from 'vanilla-tilt'
+import api from '@/services/api'
+import defaultImg from '@/assets/img/wolff.png'
+import { initPageAnimations, cleanupPageAnimations } from '@/assets/js/page-animations'
+
+const lang = inject('lang', ref('tr'))
 
 // Fire canvas ref for animations.js
 const fireCanvas = ref(null)
 const tiltRef = ref(null)
+const settings = ref(null)
 
-onMounted(() => {
-  // Trigger index animations (app.js fire + parallax)
-  // animations.js detects #fire-canvas and initIndex()
+const preTitle = computed(() => lang.value === 'en' && settings.value?.preTitleEn ? settings.value.preTitleEn : settings.value?.preTitle)
+const heroTitle = computed(() => lang.value === 'en' && settings.value?.heroTitleEn ? settings.value.heroTitleEn : settings.value?.heroTitle)
+const heroSubtitle = computed(() => lang.value === 'en' && settings.value?.heroSubtitleEn ? settings.value.heroSubtitleEn : settings.value?.heroSubtitle)
+const buttonText = computed(() => lang.value === 'en' && settings.value?.buttonTextEn ? settings.value.buttonTextEn : settings.value?.buttonText)
+const secondaryButtonText = computed(() => lang.value === 'en' && settings.value?.secondaryButtonTextEn ? settings.value.secondaryButtonTextEn : settings.value?.secondaryButtonText)
+
+const getFullUrl = (url) => {
+  if (!url) return ''
+  if (url.startsWith('http') || url.startsWith('data:')) return url
+  return api.defaults.baseURL.replace('/api', '') + url
+}
+
+const formatTitle = (title) => {
+  return title; // No longer used, but kept to prevent errors if referenced
+}
+
+const fetchSettings = async () => {
+  try {
+    const res = await api.get('/HomeSettings')
+    settings.value = res.data
+  } catch (error) {
+    console.error('Anasayfa verisi çekilemedi:', error)
+  }
+}
+
+onMounted(async () => {
+  await fetchSettings()
+  
+  // DOM'un v-if="settings" ile güncellenmesini bekle
+  await nextTick()
+  
+  // Profil resmi DOM'a eklendiği için animasyonları tekrar başlat
+  cleanupPageAnimations()
+  initPageAnimations()
   
   if (tiltRef.value) {
     VanillaTilt.init(tiltRef.value, {

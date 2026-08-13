@@ -1,0 +1,23 @@
+# API settings and secrets
+appsettings.json
+appsettings.*.json
+!appsettings.example.json
+.env
+.env.*
+!.env.example
+
+# Build and IDE
+bin/
+obj/
+.vs/
+.vscode/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# User uploads and Logs
+wwwroot/uploads/
+Logs/
+logs/

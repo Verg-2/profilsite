@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* ============================================
    MODERN PROFİL SAYFASI - ANA STİLLER
    Ateş Kırmızısı & Turuncu Tema
@@ -24,6 +26,9 @@
 html {
   scroll-behavior: smooth;
   background-color: var(--dark-bg);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
 }
 
 /* ===== GENEL SAYFA STİLLERİ =====
@@ -54,8 +59,8 @@ body {
   --text-muted: #8b8b8b;     /* Soluk metin */
   
   /* Gölge renkleri: rgba ile saydamlık ayarlanır */
-  --fire-glow: rgba(255, 77, 0, 0.5);      /* Ateş parlaması */
-  --fire-glow-soft: rgba(255, 107, 53, 0.3); /* Yumuşak ateş */
+  --fire-glow: rgba(255, 77, 0, 0.15);      /* Ateş parlaması */
+  --fire-glow-soft: rgba(255, 107, 53, 0.08); /* Yumuşak ateş */
   
   --hover-text-color: #fff;
   --skill-bar-bg: #1f1f25;
@@ -71,7 +76,7 @@ body {
   /* Daha yumuşak, göz yormayan açık renk (Cream/Beige tonları) */
   --dark-bg: #f8f6f2;        
   --card-bg: #ffffff;        
-  --border: #c4beb5;         /* Daha belirgin kenarlık rengi (Light) */
+  --border: #b5aba1;         /* Daha belirgin kenarlık rengi (Light) - Koyulaştırıldı */
   --text: #2a2724;           
   --text-muted: #5c5651;     
   
@@ -79,7 +84,7 @@ body {
   --fire-glow-soft: rgba(255, 132, 94, 0.15); 
   
   --hover-text-color: #d84518; /* Light modda hover olunan yazı koyu turuncu */
-  --skill-bar-bg: #d4cec5;     /* Light modda yetenek barı arkaplanı belirgin olsun */
+  --skill-bar-bg: #eae5de;     /* Light modda yetenek barı arkaplanı çok daha zarif, soft ve modern bir ton */
 }
 
 /* ===== NAVİGASYON ÇUBUĞU =====
@@ -163,7 +168,6 @@ body {
 .nav-links a:hover {
   color: var(--hover-text-color);
   text-shadow: 0 0 12px rgba(255, 59, 29, 0.45);
-  transform: translateY(-1px);
 }
 
 .nav-links a:hover::after {
@@ -258,6 +262,23 @@ body {
   z-index: 2;
 }
 
+@media (max-width: 900px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2rem;
+    padding-top: 2rem;
+  }
+  
+  .hero-buttons {
+    justify-content: center;
+  }
+  
+  .hero-image {
+    order: -1; /* Resmi mobilde üste al */
+  }
+}
+
 .hero-text {
   z-index: 2;
 }
@@ -278,11 +299,25 @@ body {
    clamp(min, tercih, max) → Ekrana göre otomatik ayarlanır.
    2.5rem minimum, 5vw tercih, 4rem maksimum. */
 .hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 800;
-  line-height: 1.1;               /* Sıkı satır aralığı */
-  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  margin-bottom: 24px;
   color: var(--text);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.hero-pre-title {
+  font-size: 1.25rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 700;
 }
 
 /* .highlight: Başlık içinde vurgulanan kısım (gradient metin). */
@@ -329,15 +364,18 @@ body {
 /* Birincil buton: Ateş gradient + gölge.
    translateY(-3px) → Hover'da 3px yukarı kalkar. */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
-  border: none;
-  box-shadow: 0 4px 25px var(--fire-glow);  /* Ateş gölgesi */
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);               /* Hover: Yukarı kaldır */
-  box-shadow: 0 8px 40px var(--fire-glow);   /* Daha büyük gölge */
+  transform: translateY(-3px);
+  background: rgba(255, 77, 0, 0.05); /* very soft glow bg */
+  color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 6px 15px var(--fire-glow);
 }
 
 /* İkincil buton: Şeffaf + ince kenarlık. */
@@ -389,13 +427,12 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;               /* Kırpmadan doldur */
-  filter: sepia(20%) saturate(1.3) brightness(0.95); /* Sıcak filtre */
+  transition: all 0.5s ease;
   transition: all 0.5s ease;
 }
 
 /* Hover: Filtreyi kaldır, hafif büyüt */
 .profile-img:hover {
-  filter: sepia(0%) saturate(1.1) brightness(1.05);
   transform: scale(1.03);          /* %3 büyüt */
 }
 
@@ -405,8 +442,6 @@ body {
 .image-glow {
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(circle at 50% 50%, rgba(255, 77, 0, 0.4) 0%, transparent 80%);
   pointer-events: none;
   animation: glow-pulse 3s ease-in-out infinite;
 }
@@ -432,7 +467,7 @@ body {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 3rem;
-  color: #fff;
+  color: var(--text);
   position: relative;
   display: inline-block;           /* Çizgi yalnızca metin genişliğinde */
 }
@@ -454,7 +489,7 @@ body {
    Kartlar en az 280px, ekrana sığmazsa alt satıra geçer. */
 .about-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.5rem;
 }
 
@@ -486,14 +521,14 @@ body {
   justify-content: center;
   margin-bottom: 1rem;
   font-size: 1.4rem; /* İkon boyutu */
-  color: #fff; /* Eğer inline style verilmediyse ikon rengi */
+  color: var(--text); /* Eğer inline style verilmediyse ikon rengi */
 }
 
 
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text);
   margin-bottom: 0.5rem;
 }
 
@@ -507,7 +542,7 @@ body {
    (yetenekler.html kendi inline stillerini kullanır.) */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 2rem;
 }
 
@@ -554,8 +589,9 @@ body {
 .skill-bar {
   height: 8px;
   background: var(--skill-bar-bg);
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
+  position: relative;
 }
 
 .skill-progress {
@@ -592,6 +628,10 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px 80px;
+}
+
+.mobile-filters {
+  display: none; /* Masaüstünde gizli */
 }
 
 .filter-bar {
@@ -646,11 +686,15 @@ body {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 24px;
 }
 
 .project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -705,7 +749,7 @@ body {
 .project-image {
   width: 100%;
   height: 180px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: var(--primary-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -728,6 +772,9 @@ body {
 }
 
 .project-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   padding: 24px;
 }
 
@@ -940,6 +987,19 @@ body {
   padding: 32px;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+
+.message-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-group textarea {
+  flex: 1;
+  resize: vertical;
 }
 
 .form-card::before {
@@ -1150,7 +1210,7 @@ body {
   margin: 0 auto;
   padding: 0 24px 80px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
   gap: 32px;
   position: relative;
   z-index: 1;
@@ -1206,9 +1266,9 @@ body {
 }
 
 .skill-bar {
-  height: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 5px;
+  height: 8px;
+  background: var(--skill-bar-bg);
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
 }
@@ -1270,11 +1330,14 @@ body {
 
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 32px;
 }
 
 .blog-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -1341,6 +1404,9 @@ body {
 }
 
 .blog-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   padding: 24px;
 }
 
@@ -1440,12 +1506,15 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .profile-info h2 {
   font-size: 2rem;
   margin-bottom: 8px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: var(--primary-dark);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1522,12 +1591,12 @@ body {
   }
 
   .nav-links li + li a {
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    border-top: 1px solid var(--border);
   }
 
   .nav-links li a:hover {
     background: linear-gradient(90deg, rgba(255, 59, 29, 0.08), rgba(255, 176, 0, 0.06));
-    color: #fff;
+    color: var(--hover-text-color);
     transform: translateX(4px);
     text-shadow: 0 0 10px rgba(255, 59, 29, 0.35);
   }
@@ -1783,16 +1852,96 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .filter-bar {
-    gap: 6px;
-    flex-wrap: nowrap;
+  .desktop-filters {
+    display: none !important; /* Mobilde hapları gizle */
   }
 
-  .filter-btn {
-    padding: 8px 10px;
-    font-size: 0.8rem;
-    flex: 1;
-    text-align: center;
+  .mobile-filters {
+    display: block;
+    margin-bottom: 30px;
+  }
+
+  .custom-dropdown {
+    position: relative;
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 16px 45px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .custom-dropdown.is-open {
+    border-color: var(--primary);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .selected-text {
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .filter-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--primary);
+    font-size: 1.1rem;
+    pointer-events: none;
+  }
+
+  .arrow-icon {
+    position: absolute;
+    right: 16px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    right: -1px;
+    background: var(--card-bg);
+    border: 1px solid var(--primary);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    z-index: 100;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .dropdown-item {
+    padding: 14px 20px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item:hover, .dropdown-item.active {
+    background: rgba(255, 77, 0, 0.1);
+    color: var(--primary);
+  }
+
+  .dropdown-enter-active,
+  .dropdown-leave-active {
+    transition: all 0.3s ease;
+    transform-origin: top;
+  }
+
+  .dropdown-enter-from,
+  .dropdown-leave-to {
+    opacity: 0;
+    transform: scaleY(0.95);
   }
 }
 
@@ -1840,12 +1989,12 @@ body {
   }
 
   .nav-links li + li a {
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    border-top: 1px solid var(--border);
   }
 
   .nav-links li a:hover {
     background: linear-gradient(90deg, rgba(255, 59, 29, 0.08), rgba(255, 176, 0, 0.06));
-    color: #fff;
+    color: var(--hover-text-color);
     transform: translateX(4px);
     text-shadow: 0 0 10px rgba(255, 59, 29, 0.35);
   }
@@ -1875,4 +2024,76 @@ body {
   background: rgba(248, 246, 242, 0.85); /* Açık temada tok bir bej/beyaz arkaplan */
   border-color: rgba(212, 206, 197, 0.8);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 10px 25px rgba(240, 90, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* Common Action Button (To push right to bottom center) */
+.card-action-btn {
+  margin-top: auto !important;
+  align-self: center;
+  text-align: center;
+}
+
+
+/* Light Theme Button specific styling */
+[data-theme="light"] .btn-primary {
+  background: #ffffff;
+  color: #2a2724;
+  border: 1px solid #c4beb5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .btn-primary:hover {
+  background: #fdfaf8;
+  color: #d84518;
+  border-color: #d84518;
+  box-shadow: 0 6px 15px rgba(240, 90, 40, 0.1);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: #ffffff;
+  color: #d84518;
+}
+
+
+/* =========================================
+   Contact Mobile Fix (320px)
+   ========================================= */
+@media (max-width: 480px) {
+  .contact-container {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 20px;
+  }
+
+  .contact-section {
+    gap: 16px;
+  }
+
+  .contact-card {
+    padding: 16px;
+    min-height: 0;
+    gap: 12px;
+  }
+
+  .contact-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
+
+  .contact-info {
+    min-width: 0; /* İçeriğin taşmasını engeller */
+    flex: 1; /* Kalan boşluğu doldur */
+  }
+
+  .contact-info p {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Sığmayan linkleri nokta noktaya çevir */
+  }
+
+  .form-card {
+    padding: 24px 16px; /* Form kartını biraz daralt */
+  }
 }

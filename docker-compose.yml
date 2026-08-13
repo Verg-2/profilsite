@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # 1. Veritabanı Servisi (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: kadirportfolio_db
+    restart: unless-stopped
+    environment:
+      # Bu değerler dışarıdan (örneğin .env) alınabilir, yoksa varsayılanlar kullanılır
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-KadirPortfolio2026!}
+      POSTGRES_DB: ${POSTGRES_DB:-kadirportfolio}
+    ports:
+      - "5433:5432" # Sadece geliştirme sırasında dışarıya açın, prod'da kaldırabilirsiniz
+    volumes:
+      # Konteyner silinse bile veritabanı verileriniz güvende kalır
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio_net
+
+  # 2. Backend Servisi (.NET 8 Web API)
+  backend:
+    build:
+      context: ./KadirPortfolio.Api
+      dockerfile: Dockerfile
+    container_name: kadirportfolio_backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "5001:8080" # Backend 5001 portundan çalışacak (Frontend .env ile uyumlu olması için)
+    environment:
+      # Docker içindeki 'db' ismini kullanarak veritabanına bağlanır
+      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=${POSTGRES_DB:-kadirportfolio};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-KadirPortfolio2026!}
+    env_file:
+      # Host makinedeki gizli dosyadan diğer şifreleri (JWT, Email vb.) çeker
+      - ./KadirPortfolio.Api/.env
+    volumes:
+      # Kullanıcıların yüklediği resim/dosyalar kaybolmasın diye kalıcı hafıza
+      - backend_uploads:/app/wwwroot/uploads
+    networks:
+      - portfolio_net
+
+  # 3. Frontend Servisi (Vue 3 + Nginx)
+  frontend:
+    build:
+      context: ./vue-proje
+      dockerfile: Dockerfile
+    container_name: kadirportfolio_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80" # Siteye doğrudan port belirtmeden girmek için
+    networks:
+      - portfolio_net
+
+# Kalıcı Diskler (Veriler konteynerle silinmesin diye)
+volumes:
+  postgres_data:
+  backend_uploads:
+
+# Servislerin güvenli iletişimi için özel kapalı ağ
+networks:
+  portfolio_net:
+    driver: bridge

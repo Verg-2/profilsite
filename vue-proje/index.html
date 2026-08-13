@@ -4,14 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kadir | Vue Portfolio</title>
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    
+    <!-- Google Model Viewer (3D WebGL Support) -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <!-- Gelişmiş SEO ve Performans Etiketleri -->
+    <link rel="canonical" href="https://kadir.com/" />
+    <link rel="alternate" hreflang="tr" href="https://kadir.com/" />
+    <link rel="alternate" hreflang="en" href="https://kadir.com/en" />
+    
+    <!-- Font Preload (FOIT Engelleme) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="font" href="/fonts/placeholder.woff2" type="font/woff2" crossorigin>
+
+    <!-- Schema Markup (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Kadir Altundağ",
+      "url": "https://github.com/Verg-2",
+      "sameAs": [
+        "https://www.linkedin.com/in/kadir-altundag/",
+        "https://github.com/Verg-2",
+        "https://www.instagram.com/?utm_source=pwa_homescreen&__pwa=1"
+      ]
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script type="module" src="/src/main.js"></script>
+    <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Prerender/SSG simülasyonu: Radar'a içeriğin dinamik olarak yüklendiğini bildirir -->
+    </div>
   </body>
 </html>
 

@@ -3,86 +3,113 @@
     <canvas id="stars-canvas"></canvas>
 
     <header class="page-header">
-      <h1>Hakkında</h1>
-      <p>Beni daha yakından tanımak ister misiniz?</p>
+      <h1>{{ lang === 'en' ? 'About' : 'Hakkında' }}</h1>
+      <p>{{ lang === 'en' ? 'Do you want to know me better?' : 'Beni daha yakından tanımak ister misiniz?' }}</p>
     </header>
 
     <main class="content-container">
-      <div class="profile-card fade-in">
+      <div class="profile-card fade-in" v-if="settings">
         <div class="profile-image" ref="tiltRef">
-          <img src="@/assets/img/wolff.png" alt="Profil Fotoğrafı" />
+          <img :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" />
         </div>
-        <div class="profile-info">
-          <h2>Merhaba, ben Kadir</h2>
-          <p class="title">Frontend Developer & UI/UX Meraklısı</p>
+        <div class="profile-info" style="position: relative;">
+          <!-- Status Badge -->
+          <div v-if="settings.isLookingForJob" class="status-badge">
+            <span class="status-dot"></span>
+            <div class="status-text">
+              <strong>{{ (lang === 'en' && settings.cardTitleEn) ? settings.cardTitleEn : (settings.cardTitle || '1 Yıldır Sektördeyim - İş Arıyorum') }}</strong>
+              <span v-if="settings.cardSubtitle" style="font-size: 0.75rem; opacity: 0.8; display: block;">{{ (lang === 'en' && settings.cardSubtitleEn) ? settings.cardSubtitleEn : settings.cardSubtitle }}</span>
+            </div>
+          </div>
+
+          <h2>{{ (lang === 'en' && settings.mainTitleEn) ? settings.mainTitleEn : (settings.mainTitle || 'Hakkımda') }}</h2>
+          <p class="title">{{ (lang === 'en' && settings.subTitleEn) ? settings.subTitleEn : settings.subTitle }}</p>
           <p class="bio">
-            Yazılım geliştirme dünyasına olan tutkum, lise yıllarında bir HTML kitabıyla başladı.
-            O günden bu yana sürekli öğrenmeye ve kendimi geliştirmeye devam ediyorum.
-            Modern web teknolojileri, temiz kod yazımı ve kullanıcı deneyimi tasarımı
-            benim öncelikli ilgi alanlarım. Her projede en iyi çözümü bulmak için
-            çözüm odaklı düşünmeyi ilke edindim.
+            {{ (lang === 'en' && settings.bioEn) ? settings.bioEn : settings.bio }}
           </p>
+          <a v-if="settings.resumeUrl" :href="getFullUrl(settings.resumeUrl)" target="_blank" class="btn btn-primary" style="margin-top: 15px; display: inline-block;">Özgeçmişi İndir</a>
         </div>
       </div>
 
-      <div class="info-grid">
-        <div class="info-card fade-in">
-          <i class="fas fa-code card-icon" style="color: #ff4d00;"></i>
-          <h3>Neler Yapıyorum?</h3>
-          <p>Web siteleri, web uygulamaları ve kullanıcı arayüzleri tasarlayıp geliştiriyorum. Modern teknolojileri takip ediyor ve en iyi çözümleri üretmeye çalışıyorum. Her projede performans ve kullanılabilirlik ön planda.</p>
+      <div class="info-grid" v-if="settings && settings.cards">
+        <div class="info-card fade-in" v-for="item in sortedItems" :key="item.id">
+          <i v-if="item.icon && (item.icon.includes('fa-') || item.icon.includes('ph-'))" :class="item.icon + ' card-icon'" style="color: #ff4d00;"></i>
+          <span v-else-if="item.icon" class="card-icon" style="font-size: 2.5rem; display: block; margin-bottom: 15px;">{{ item.icon }}</span>
+          <i v-else class="fa-solid fa-star card-icon" style="color: #ff4d00;"></i>
+          <h3>{{ (lang === 'en' && item.titleEn) ? item.titleEn : item.title }}</h3>
+          
+          <template v-if="item.cardType === 2 && ((lang === 'en' && item.listItemsEn && item.listItemsEn.length) || (item.listItems && item.listItems.length))">
+            <ul style="list-style: none; padding: 0; margin-top: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px;">
+              <li v-for="(listItem, i) in (lang === 'en' && item.listItemsEn && item.listItemsEn.length ? item.listItemsEn : item.listItems)" :key="i" style="padding-left: 20px; position: relative; font-size: 0.95rem; line-height: 1.5; color: var(--text);">
+                <span style="position: absolute; left: 0; top: 2px; color: #ff4d00; font-size: 1.2rem;">&rsaquo;</span>
+                {{ listItem }}
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            <p style="margin-top: 10px; line-height: 1.6;">{{ (lang === 'en' && item.textEn) ? item.textEn : item.text }}</p>
+          </template>
         </div>
-
-        <div class="info-card fade-in">
-          <i class="fas fa-lightbulb card-icon" style="color: #ff6b35;"></i>
-          <h3>Yaklaşımım</h3>
-          <p>Her proje benzersizdir. Müşteri ihtiyaçlarını anlayarak, en uygun ve ölçeklenebilir çözümleri sunuyorum. Kod kalitesi ve performans benim için önemli. Temiz, okunabilir ve sürdürülebilir kod yazmayı tercih ediyorum.</p>
-        </div>
-
-        <div class="info-card fade-in">
-          <i class="fas fa-rocket card-icon" style="color: #ffa500;"></i>
-          <h3>Hedeflerim</h3>
-          <p>Sürekli öğrenmeye ve kendimi geliştirmeye açığım. Yeni teknolojiler öğrenmek, zorlu projeler üzerinde çalışmak beni motive ediyor. Uzun vadede full-stack geliştirici olmak ve kendi ürünlerimi oluşturmak istiyorum.</p>
-        </div>
-
-        <div class="info-card fade-in">
-          <i class="fas fa-heart card-icon" style="color: #ff4d00;"></i>
-          <h3>Nelerden Hoşlanırım?</h3>
-          <p>Yazılım geliştirme dışında kendimi geliştirebileceğim yeni konular öğrenmek ve farklı alanları keşfetmek hoşuma gider. Zaman zaman satranç oynamak, stratejik düşünme becerilerimi geliştiren aktivitelerden biridir. Bunun yanında futbol oynamak veya maç izlemek de keyif aldığım aktiviteler arasında yer alır. Günlük hayatımda dolu dolu ve verimli sohbetler etmeyi severim. Boş zamanlarımda ise ara sıra telefon ve bilgisayar oyunları oynayarak vakit geçiririm.</p>
-        </div>
-
-        <div class="info-card fade-in">
-          <i class="fas fa-seedling card-icon" style="color: #ff6b35;"></i>
-          <h3>Büyüme Yolculuğum</h3>
-          <p>Her gün bir şeyler öğrenmeye çalışıyorum. Hatalarımdan ders çıkarıyor, daha iyi bir geliştirici olmak için çabalıyorum. Başarıya giden yolun sürekli öğrenmeden geçtiğine inanıyorum.</p>
-        </div>
-
-        <div class="info-card fade-in">
-          <i class="fas fa-handshake card-icon" style="color: #ffa500;"></i>
-          <h3>İşbirliği</h3>
-          <p>Takım çalışmasına açığım ve farklı bakış açılarından öğrenmeyi seviyorum. Bir projede birlikte çalışmak isterseniz, her zaman iletişime geçebilirsiniz. Birlikte harika işler çıkarabiliriz!</p>
-        </div>
+      </div>
+      <div v-else-if="!settings" class="text-center" style="padding: 2rem; color: #888;">
+        <p>Hakkımda bilgisi yükleniyor...</p>
       </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed, nextTick, inject } from 'vue'
 import VanillaTilt from 'vanilla-tilt'
+import api from '@/services/api'
+import defaultImg from '@/assets/img/wolff.png'
+
+const lang = inject('lang', ref('tr'))
 
 const tiltRef = ref(null)
+const settings = ref(null)
+
+const getFullUrl = (url) => {
+  if (!url) return ''
+  if (url.startsWith('http') || url.startsWith('data:')) return url
+  return api.defaults.baseURL.replace('/api', '') + url
+}
+
+const fetchSettings = async () => {
+  try {
+    const res = await api.get('/AboutSettings')
+    settings.value = res.data
+    
+    // VanillaTilt init after DOM updates
+    nextTick(() => {
+      if (tiltRef.value) {
+        VanillaTilt.init(tiltRef.value, {
+          max: 10,
+          speed: 400,
+          glare: true,
+          "max-glare": 0.1,
+          scale: 1.02,
+          gyroscope: true
+        })
+      }
+      
+      setTimeout(() => {
+        const elements = document.querySelectorAll('.about-page .fade-in');
+        elements.forEach(el => el.classList.add('visible'));
+      }, 100);
+    })
+  } catch (error) {
+    console.error('Hakkında verisi çekilemedi:', error)
+  }
+}
+
+const sortedItems = computed(() => {
+  if (!settings.value || !settings.value.cards) return []
+  return [...settings.value.cards]
+})
 
 onMounted(() => {
-  if (tiltRef.value) {
-    VanillaTilt.init(tiltRef.value, {
-      max: 15,
-      speed: 400,
-      glare: true,
-      "max-glare": 0.3,
-      scale: 1.05,
-      gyroscope: true
-    })
-  }
+  fetchSettings()
 })
 
 onBeforeUnmount(() => {
@@ -91,3 +118,51 @@ onBeforeUnmount(() => {
   }
 })
 </script>
+<style scoped>
+/* Mevcut stillere ek olarak status badge stilleri */
+.status-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  backdrop-filter: blur(8px);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ff4d00;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff4d00;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 77, 0, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 77, 0, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 77, 0, 0); }
+}
+
+.status-text strong {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .status-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+  }
+}
+</style>

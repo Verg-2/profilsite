@@ -1,75 +1,99 @@
-# 🚀 Profil ve Vue Projesi - Git Kullanım Rehberi
+# 🚀 Kadir Portfolio & CMS Projesi
 
-Bu repo, hem statik HTML sayfalarından oluşan bir portföyü hem de **Vue.js** ile geliştirilmiş ayrı bir projeyi içerir.
+![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)
+![.NET 8](https://img.shields.io/badge/.NET_8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## 📂 Proje Yapısı
+Kadir Portfolio, modern web teknolojileri kullanılarak geliştirilmiş, tamamen dinamik yönetilebilen bir kişisel portfolyo ve CMS (İçerik Yönetim Sistemi) projesidir. Sistem, baştan sona Dockerize edilmiş mimarisi sayesinde tek bir komutla ayağa kaldırılıp çalıştırılabilir.
 
-*   **Ana Dizin (`/`)**: Statik HTML, CSS ve JS dosyalarını içerir (`index.html`, `hakkinda.html`, `blog.html`).
-*   **Vue Projesi (`/vue-proje`)**: Vue.js ile geliştirilmiş modern web uygulaması burada bulunur.
+## ✨ Öne Çıkan Özellikler
 
----
-
-## 🛠️ Günlük Git Komutları (Nasıl Kullanılır?)
-
-Projende bir değişiklik yaptıktan sonra GitHub'a göndermek için sırasıyla şu adımları izle:
-
-### 1. Durumu Kontrol Et
-Hangi dosyaların değiştiğini görmek için:
-```bash
-git status
-```
-
-### 2. Değişiklikleri Ekle
-Tüm yeni ve değişen dosyaları paketlemek için:
-```bash
-git add .
-```
-
-### 3. Kayıt Oluştur (Commit)
-Yaptığın değişikliği anlatan kısa bir mesajla kaydet:
-```bash
-git commit -m "Buraya yapılan değişikliği yaz (örn: İletişim sayfası eklendi)"
-```
-
-### 4. GitHub'a Gönder (Push)
-Değişiklikleri uzak sunucuya yükle:
-```bash
-git push
-```
-
-### 5. Güncellemeleri Çek (Pull)
-Eğer GitHub üzerinden doğrudan bir değişiklik yaptıysan veya başka bir bilgisayardan yükleme yaptıysan, güncellemeleri almak için:
-```bash
-git pull
-```
+- **Dinamik Yönetim Paneli**: Tüm içerikleri (Hakkında, Blog, Projeler, İletişim vb.) kullanıcı dostu admin paneli üzerinden yönetebilirsiniz.
+- **Tamamen Dockerize Mimari**: Frontend, Backend ve Veritabanı izole konteynerlar (container) içerisinde çalışır.
+- **Modern ve Şık Tasarım**: Vue 3 ile geliştirilmiş, harika animasyonlara sahip (Glassmorphism) kullanıcı arayüzü.
+- **Gelişmiş SEO ve GEO Ayarları**: Sitenizin Google ve sosyal medya (Open Graph, Twitter Cards) görünümlerini tamamen dinamik olarak admin panelinden ayarlayabilirsiniz.
+- **Dinamik Sözlük (Çeviri Kalkanı)**: Sitenizdeki teknik terimlerin çeviri motorları tarafından yanlış çevrilmesini önlemek için özel kurallar ekleyebilirsiniz.
+- **Sistem Sağlığı ve Analitik**: Ziyaretçi istatistiklerini görebilir, API sağlığını ve hata kayıtlarını admin panelinden izleyebilirsiniz.
 
 ---
 
-## 💻 Vue Projesini Çalıştırma
+## 🛠 Kullanılan Teknolojiler
 
-Vue projesini yerel bilgisayarında çalıştırmak istiyorsan şu adımları izlemelisin:
+### Önyüz (Frontend)
+- **Vue.js 3** & **Vite**
+- **Vue Router** (Yönlendirmeler)
+- **Vanilla CSS** (Özel modern tasarımlar)
+- **SweetAlert2** (Gelişmiş bildirim pencereleri)
 
-1.  Vue klasörüne gir:
-    ```bash
-    cd vue-proje
-    ```
+### Arkayüz (Backend)
+- **.NET 8 (C#)** & **ASP.NET Core Web API**
+- **Entity Framework Core** (ORM)
+- **JWT (JSON Web Token)** (Güvenli kimlik doğrulama)
 
-2.  Gerekli paketleri yükle (Sadece ilk kez veya `package.json` değiştiğinde):
-    ```bash
-    npm install
-    ```
-
-3.  Geliştirme sunucusunu başlat:
-    ```bash
-    npm run dev
-    ```
+### Veritabanı ve Altyapı
+- **PostgreSQL** (Güçlü ve açık kaynak ilişkisel veritabanı)
+- **Docker & Docker Compose** (Konteyner mimarisi)
+- **Nginx** (Frontend SPA sunumu için ters vekil sunucu)
 
 ---
 
-## 🔒 Güvenlik Notları (.gitignore)
+## 🚀 Kurulum ve Çalıştırma (A'dan Z'ye)
 
-Aşağıdaki dosyalar **.gitignore** dosyası ile engellenmiştir ve GitHub'a yüklenmez:
-*   `node_modules/`: Çok büyük ve gereksiz kütüphane dosyaları.
-*   `.env`: Şifreler ve özel anahtarlar (varsa).
-*   `dist/`: Build alındığında oluşan çıktılar.
-*   `.idea/`, `.vscode/`: Kişisel editör ayarları.git
+Bu proje **Docker** kullanılarak tasarlandığı için sisteminize Node.js, .NET SDK veya PostgreSQL kurmanıza gerek **yoktur**. Sadece Docker'ın bilgisayarınızda yüklü olması yeterlidir.
+
+### Ön Gereksinimler
+- Bilgisayarınızda [Docker Desktop](https://www.docker.com/products/docker-desktop) kurulu ve arka planda çalışıyor olmalıdır.
+
+### 1. Adım: Projeyi İndirin
+Projeyi bilgisayarınıza indirin (veya git clone ile çekin) ve terminalden (veya komut istemcisi/powershell) projenin ana klasörüne gidin:
+```bash
+git clone https://github.com/Verg-2/profilsite.git
+cd profilsite
+```
+
+### 2. Adım: Çevresel Değişkenleri (Env) Ayarlayın
+Sistemin çalışması için bazı şifrelere ihtiyacı vardır. 
+- `KadirPortfolio.Api` klasörünün içindeki `appsettings.example.json` veya `.env.example` dosyasını örnek alarak, aynı klasörde bir `.env` dosyası oluşturun ve içerisine şifrelerinizi yazın.
+
+Örnek `.env` içeriği (`KadirPortfolio.Api/.env`):
+```env
+JWT_SECRET_KEY=BURAYA_UZUN_VE_GIZLI_BIR_SIFRE_YAZIN
+DB_CONNECTION_STRING=Host=db;Port=5432;Database=kadirportfolio;Username=postgres;Password=KadirPortfolio2026!
+```
+
+### 3. Adım: Tek Komutla Sistemi Başlatın
+Ana klasörde (`docker-compose.yml` dosyasının bulunduğu yer) terminali açın ve şu sihirli komutu çalıştırın:
+
+```bash
+docker-compose up -d --build
+```
+*Not: Bu işlem, ilk çalıştırmada imajları (image) indirip derleyeceği için bilgisayarınızın ve internetinizin hızına göre birkaç dakika sürebilir.*
+
+### 4. Adım: Siteye Giriş Yapın
+Kurulum bittikten sonra sisteminiz kullanıma hazırdır! Tarayıcınızı açın ve aşağıdaki adreslere gidin:
+
+- **Ana Web Sitesi:** [http://localhost](http://localhost)
+- **Admin Paneli:** [http://localhost/admin/login](http://localhost/admin/login)
+
+---
+
+## 🛑 Sistemi Durdurmak veya Kapatmak
+
+Çalışan projeyi durdurmak isterseniz, terminalde projenin ana dizininde şu komutu çalıştırabilirsiniz:
+```bash
+docker-compose down
+```
+Bu komut sistemi durdurur. Merak etmeyin, veritabanına eklediğiniz bilgiler (yazılar, ayarlar vb.) silinmez, koruma altındadır. Sistemi tekrar başlatmak için `docker-compose up -d` yazmanız yeterlidir.
+
+---
+
+## 🗂 Klasör Yapısı
+
+- `/KadirPortfolio.Api` ➔ .NET 8 Backend API kodları, Modeller, Controller'lar ve API Servisleri.
+- `/vue-proje` ➔ Vue 3 Frontend kodları, Vue sayfaları (`src/views`), bileşenler (`src/components`) ve CSS stilleri.
+- `docker-compose.yml` ➔ Tüm mimarinin (Frontend, Backend, Veritabanı) iletişimini kuran ve yöneten ana yapılandırma dosyası.
+
+---
+**Geliştirici:** Kadir 
+*Eğer bir hata ile karşılaşırsanız veya katkıda bulunmak isterseniz Issue veya Pull Request açabilirsiniz!*

@@ -18,6 +18,5 @@ obj/
 *.db-wal
 
 # User uploads and Logs
-wwwroot/uploads/
 Logs/
 logs/

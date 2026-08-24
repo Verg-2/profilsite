@@ -60,8 +60,8 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            // Production ortamında sadece gerçek frontend domaininize izin verin
-            corsBuilder.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost") 
+            // Production ortamında Vercel gibi her adresten gelen isteklere izin veriyoruz
+            corsBuilder.SetIsOriginAllowed(origin => true) 
                        .AllowAnyMethod()
                        .AllowAnyHeader()
                        .AllowCredentials();

@@ -1,5 +1,10 @@
-using System.Net;
-using System.Net.Mail;
+using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using MailKit.Net.Smtp;
+using MimeKit;
+using MailKit.Security;
 
 namespace KadirPortfolio.Api.Services
 {
@@ -28,25 +33,24 @@ namespace KadirPortfolio.Api.Services
                 return;
             }
 
-            using var client = new SmtpClient(host, port)
-            {
-                Credentials = new NetworkCredential(email, password),
-                EnableSsl = true,
-                Timeout = 10000 
-            };
-
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(email, "Kadir Portfolio Sistem"),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true,
-            };
-            mailMessage.To.Add(to);
-
             try
             {
-                await Task.Run(() => client.Send(mailMessage));
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Kadir Portfolio Sistem", email));
+                message.To.Add(new MailboxAddress(to, to));
+                message.Subject = subject;
+
+                var builder = new BodyBuilder { HtmlBody = body };
+                message.Body = builder.ToMessageBody();
+
+                using var client = new SmtpClient();
+                client.Timeout = 10000; // 10 seconds timeout
+
+                await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(email, password);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+
                 _logger.LogInformation($"Email başarıyla gönderildi: {to}");
             }
             catch (Exception ex)

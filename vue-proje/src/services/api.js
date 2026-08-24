@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api',
   headers: {
     'Content-Type': 'application/json'
   },
@@ -38,7 +38,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401 && !originalRequest._retry && token) {
       originalRequest._retry = true;
       try {
-        const refreshUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5001/api') + '/auth/refresh';
+        const refreshUrl = (import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api') + '/auth/refresh';
         const res = await axios.post(refreshUrl, {}, { 
           withCredentials: true,
           headers: { Authorization: `Bearer ${token}` }

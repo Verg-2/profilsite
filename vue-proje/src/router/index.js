@@ -51,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
     try {
       // Lazy import axios or use fetch to avoid circular dependency with api.js
       const path = encodeURIComponent(to.path);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api';
       const res = await fetch(`${apiUrl}/SeoSettings/${path}`);
       if (res.ok) {
         const seoData = await res.json();
@@ -125,7 +125,7 @@ router.beforeEach(async (to, from, next) => {
         
         const isProjectRoute = to.path.startsWith('/proje/');
         try {
-           const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+           const apiUrl = import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api';
            const aboutRes = await fetch(`${apiUrl}/AboutSettings`);
            if (aboutRes.ok) {
              const aboutData = await aboutRes.json();

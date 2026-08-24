@@ -181,7 +181,14 @@ else
         {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync("{\"error\": \"Sunucu tarafında beklenmeyen bir hata oluştu.\"}");
+            
+            var exceptionHandlerPathFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerPathFeature>();
+            var errorMessage = exceptionHandlerPathFeature?.Error?.Message ?? "Bilinmeyen hata";
+            var path = exceptionHandlerPathFeature?.Path ?? "Bilinmeyen yol";
+            
+            Console.WriteLine($"[GLOBAL ERROR] YOL: {path} HATA: {errorMessage}");
+            
+            await context.Response.WriteAsync($"{{\"error\": \"Sunucu tarafında beklenmeyen bir hata oluştu.\", \"hata_detayi\": \"{errorMessage}\", \"yol\": \"{path}\"}}");
         });
     });
 }

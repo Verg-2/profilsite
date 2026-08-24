@@ -59,17 +59,12 @@ namespace KadirPortfolio.Api.Controllers
             
             await _authService.TrackDeviceAsync(user, deviceHash, ipAddress);
 
-            // 5. Bypass 2FA and directly login (Due to Google SMTP blocking Render IP)
-            var jwtToken = await _authService.GenerateJwtTokenAsync(user, TimeSpan.FromMinutes(15));
-            var refreshToken = await _authService.GenerateRefreshTokenAsync();
-            var refreshTokenExpiry = request.RememberMe ? DateTime.UtcNow.AddDays(1) : DateTime.UtcNow.AddHours(2);
+            // 5. Generate and send 2FA code
+            await _authService.GenerateAndSend2FaCodeAsync(user);
 
-            await _authService.SaveRefreshTokenAsync(user, refreshToken, refreshTokenExpiry);
-            SetRefreshTokenCookie(refreshToken, refreshTokenExpiry);
+            await _auditLogger.LogAsync("LOGIN_2FA_SENT", $"2FA code sent to {request.Email}", ipAddress, userAgent, user.Email);
 
-            await _auditLogger.LogAsync("LOGIN_SUCCESS", "Admin successfully logged in (2FA Bypassed)", ipAddress, userAgent, user.Email);
-
-            return Ok(new { success = true, token = jwtToken });
+            return Ok(new { success = true, require2Fa = true, message = "2FA kodu e-posta adresinize gönderildi." });
         }
 
         [HttpPost("verify-2fa")]

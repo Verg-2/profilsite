@@ -157,7 +157,8 @@ function toggleTheme(event) {
   }
 
   // Modern tarayıcılarda çok şık bir geçiş (View Transitions API)
-  if (!document.startViewTransition) {
+  // Ancak mobilde bu özellik çok ağır çalıştığı için mobil cihazlarda kapatıyoruz.
+  if (!document.startViewTransition || window.innerWidth < 768) {
     switchTheme()
     return
   }

@@ -172,6 +172,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // Prod ortamında hata detaylarını (stack trace) dışarı sızdırmamak için global hata yakalayıcı
+    app.UseExceptionHandler(errorApp =>
+    {
+        errorApp.Run(async context =>
+        {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync("{\"error\": \"Sunucu tarafında beklenmeyen bir hata oluştu.\"}");
+        });
+    });
+}
+
 
 // Security Headers Middleware (Clickjacking, MIME Sniffing, XSS protection, CSP, vb.)
 app.Use(async (context, next) =>

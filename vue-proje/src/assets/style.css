@@ -594,6 +594,12 @@ body {
   position: relative;
 }
 
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
 .skill-progress {
   height: 100%;
   background: linear-gradient(90deg, var(--primary), var(--accent));
@@ -2097,3 +2103,16 @@ body {
     padding: 24px 16px; /* Form kartını biraz daralt */
   }
 }
+
+/* Mobil Performans Optimizasyonlari */
+@media (max-width: 768px) {
+  .navbar, .theme-nav-btn {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--dark-bg) !important;
+  }
+  canvas#fire-canvas, canvas#particles-canvas, canvas#stars-canvas {
+    display: none !important;
+  }
+}
+

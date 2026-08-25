@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://kadir-api.azurewebsites.net/api',
   headers: {
     'Content-Type': 'application/json'
   },

@@ -79,10 +79,18 @@
           </div>
         </div>
         
-        <h1 class="title" style="margin-bottom: 10px;">Güvenlik Onayı</h1>
-        <p style="text-align: center; color: #9CA3AF; margin-bottom: 25px; font-size: 14px;">E-postanıza gönderilen 6 haneli kodu girin.</p>
-
-        <div class="countdown-display">{{ formattedTime }}</div>
+        <h1 class="title" style="margin-bottom: 10px;">{{ setup2FaRequired ? '2FA Kurulumu' : 'Güvenlik Onayı' }}</h1>
+        
+        <div v-if="setup2FaRequired" class="setup-container">
+          <p style="text-align: center; color: #9CA3AF; margin-bottom: 15px; font-size: 14px;">Google Authenticator uygulamasını indirin ve aşağıdaki QR kodu okutun.</p>
+          <div class="qr-code-box">
+            <img :src="qrCode" alt="QR Code" v-if="qrCode" />
+          </div>
+          <p style="text-align: center; color: #6B7280; font-size: 12px; margin-bottom: 20px;">Manuel Kod: <strong>{{ setupKey }}</strong></p>
+        </div>
+        <div v-else>
+          <p style="text-align: center; color: #9CA3AF; margin-bottom: 25px; font-size: 14px;">Google Authenticator uygulamanızdaki 6 haneli kodu girin.</p>
+        </div>
 
         <form @submit.prevent="handle2Fa" class="form">
           <div class="otp-boxes">
@@ -130,6 +138,9 @@ const isLoading = ref(false);
 const isVerifying = ref(false);
 const error = ref('');
 const require2Fa = ref(false);
+const setup2FaRequired = ref(false);
+const qrCode = ref('');
+const setupKey = ref('');
 const isCaptchaChecked = ref(false);
 const focusedField = ref(null);
 const showPassword = ref(false);
@@ -172,32 +183,8 @@ onMounted(() => {
 const otpRefs = ref([]);
 const otpString = computed(() => form.otp.join(''));
 
-let timer = null;
-const timeLeft = ref(180);
+// Google Authenticator için timer gerekmiyor.
 
-const formattedTime = computed(() => {
-  const m = Math.floor(timeLeft.value / 60).toString().padStart(2, '0');
-  const s = (timeLeft.value % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
-});
-
-const startTimer = () => {
-  timeLeft.value = 180;
-  if (timer) clearInterval(timer);
-  timer = setInterval(() => {
-    if (timeLeft.value > 0) {
-      timeLeft.value--;
-    } else {
-      clearInterval(timer);
-      error.value = "2FA kodunun süresi doldu. Lütfen tekrar giriş yapın.";
-      require2Fa.value = false;
-    }
-  }, 1000);
-};
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer);
-});
 
 const focusNext = (index, event) => {
   if (event.target.value && index < 5) {
@@ -229,7 +216,13 @@ const handleLogin = async () => {
     if (response.data.success) {
       if (response.data.require2Fa) {
         require2Fa.value = true;
-        startTimer();
+        if (response.data.setup2FaRequired) {
+          setup2FaRequired.value = true;
+          qrCode.value = response.data.qrCode;
+          setupKey.value = response.data.setupKey;
+        } else {
+          setup2FaRequired.value = false;
+        }
       } else if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('rememberMe', form.rememberMe);

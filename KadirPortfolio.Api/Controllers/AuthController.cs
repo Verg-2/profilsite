@@ -16,13 +16,15 @@ namespace KadirPortfolio.Api.Controllers
         private readonly ICaptchaService _captchaService;
         private readonly IAuditLogger _auditLogger;
         private readonly IConfiguration _config;
+        private readonly ITelegramService _telegramService;
 
-        public AuthController(IAuthService authService, ICaptchaService captchaService, IAuditLogger auditLogger, IConfiguration config)
+        public AuthController(IAuthService authService, ICaptchaService captchaService, IAuditLogger auditLogger, IConfiguration config, ITelegramService telegramService)
         {
             _authService = authService;
             _captchaService = captchaService;
             _auditLogger = auditLogger;
             _config = config;
+            _telegramService = telegramService;
         }
 
         [HttpPost("login")]
@@ -59,12 +61,26 @@ namespace KadirPortfolio.Api.Controllers
             
             await _authService.TrackDeviceAsync(user, deviceHash, ipAddress);
 
-            // 5. Generate and send 2FA code
-            await _authService.GenerateAndSend2FaCodeAsync(user);
-
-            await _auditLogger.LogAsync("LOGIN_2FA_SENT", $"2FA code sent to {request.Email}", ipAddress, userAgent, user.Email);
-
-            return Ok(new { success = true, require2Fa = true, message = "2FA kodu e-posta adresinize gönderildi." });
+            // 5. Setup or Require TOTP 2FA
+            if (!user.IsTwoFactorEnabled)
+            {
+                var setupInfo = await _authService.Generate2FaSetupAsync(user);
+                await _auditLogger.LogAsync("LOGIN_2FA_SETUP", $"2FA setup initiated for {request.Email}", ipAddress, userAgent, user.Email);
+                
+                return Ok(new { 
+                    success = true, 
+                    require2Fa = true, 
+                    setup2FaRequired = true,
+                    qrCode = setupInfo.QrCodeImageUrl,
+                    setupKey = setupInfo.ManualEntryKey,
+                    message = "Lütfen Google Authenticator ile QR kodu okutun." 
+                });
+            }
+            else
+            {
+                await _auditLogger.LogAsync("LOGIN_2FA_REQUIRED", $"2FA required for {request.Email}", ipAddress, userAgent, user.Email);
+                return Ok(new { success = true, require2Fa = true, setup2FaRequired = false, message = "Lütfen Authenticator uygulamanızdaki 6 haneli kodu girin." });
+            }
         }
 
         [HttpPost("verify-2fa")]

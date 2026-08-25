@@ -16,6 +16,9 @@ namespace KadirPortfolio.Api.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
         
+        public string? TwoFactorSecret { get; set; }
+        public bool IsTwoFactorEnabled { get; set; } = false;
+        
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

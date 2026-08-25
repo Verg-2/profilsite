@@ -104,13 +104,19 @@ namespace KadirPortfolio.Api.Services
             return await _context.AdminUsers.FirstOrDefaultAsync(u => u.Id == userId && u.RefreshToken == hashedInputToken && u.RefreshTokenExpiryTime > DateTime.UtcNow);
         }
 
-        public async Task GenerateAndSend2FaCodeAsync(AdminUser user)
+        public async Task<(string QrCodeImageUrl, string ManualEntryKey)> Generate2FaSetupAsync(AdminUser user)
         {
-            var code = System.Security.Cryptography.RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
-            
-            _cache.Set($"2FA_{user.Email}", code, TimeSpan.FromMinutes(3));
+            if (string.IsNullOrEmpty(user.TwoFactorSecret))
+            {
+                user.TwoFactorSecret = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
+                _context.AdminUsers.Update(user);
+                await _context.SaveChangesAsync();
+            }
 
-            await _emailService.SendEmailAsync(user.Email, "Yönetim Paneli Giriş Kodu (2FA)", $"Giriş kodunuz: {code}. Bu kod 3 dakika geçerlidir.");
+            var tfa = new Google.Authenticator.TwoFactorAuthenticator();
+            var setupInfo = tfa.GenerateSetupCode("Kadir Portfolio", user.Email, user.TwoFactorSecret, false, 3);
+            
+            return (setupInfo.QrCodeSetupImageUrl, setupInfo.ManualEntryKey);
         }
 
         private static readonly object _2faLock = new object();
@@ -118,33 +124,39 @@ namespace KadirPortfolio.Api.Services
         public async Task<bool> Verify2FaCodeAsync(string email, string code)
         {
             string attemptsKey = $"2FA_Attempts_{email}";
-            string codeKey = $"2FA_{email}";
-
+            
             lock (_2faLock)
             {
                 int attempts = _cache.TryGetValue(attemptsKey, out int currentAttempts) ? currentAttempts : 0;
-
-                if (attempts >= 3)
+                if (attempts >= 5)
                 {
-                    _cache.Remove(codeKey);
+                    return false; // Çok fazla hatalı deneme
+                }
+                _cache.Set(attemptsKey, attempts + 1, TimeSpan.FromMinutes(5));
+            }
+
+            var user = await GetUserByEmailAsync(email);
+            if (user == null || string.IsNullOrEmpty(user.TwoFactorSecret)) return false;
+
+            var tfa = new Google.Authenticator.TwoFactorAuthenticator();
+            bool isValid = tfa.ValidateTwoFactorPIN(user.TwoFactorSecret, code);
+
+            if (isValid)
+            {
+                lock (_2faLock)
+                {
                     _cache.Remove(attemptsKey);
-                    return false; // Doğrudan kilitle
                 }
 
-                if (_cache.TryGetValue(codeKey, out string cachedCode))
+                if (!user.IsTwoFactorEnabled)
                 {
-                    if (cachedCode == code)
-                    {
-                        _cache.Remove(codeKey);
-                        _cache.Remove(attemptsKey);
-                        return true;
-                    }
-
-                    // Hatalı deneme sayısını kilitleyerek ve güvenli şekilde artırarak yaz
-                    _cache.Set(attemptsKey, attempts + 1, TimeSpan.FromMinutes(3));
+                    user.IsTwoFactorEnabled = true;
+                    _context.AdminUsers.Update(user);
+                    await _context.SaveChangesAsync();
                 }
             }
-            return await Task.FromResult(false);
+
+            return isValid;
         }
 
         public async Task TrackDeviceAsync(AdminUser user, string deviceHash, string ipAddress)

@@ -787,12 +787,16 @@ TASK: Verify if perfect. Reply PERFECT, or return the ENTIRE corrected translati
                         return sb.ToString();
                     }
                 }
+                else
+                {
+                    return $"[Çeviri Hatası: Google Translate Erişimi Engelledi (HTTP {(int)response.StatusCode}). Lütfen Gemini kullanın.]";
+                }
                 return text;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Google Translate Hatası: {ex.Message}");
-                return text;
+                return $"[Çeviri Hatası: Google Translate Bağlantı Hatası: {ex.Message}]";
             }
         }
 

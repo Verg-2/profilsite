@@ -62,9 +62,14 @@ const formatTitle = (title) => {
 }
 
 const fetchSettings = async () => {
+  if (window.__homeSettingsCache) {
+    settings.value = window.__homeSettingsCache
+    return
+  }
   try {
     const res = await api.get('/HomeSettings')
     settings.value = res.data
+    window.__homeSettingsCache = res.data
   } catch (error) {
     console.error('Anasayfa verisi çekilemedi:', error)
   }

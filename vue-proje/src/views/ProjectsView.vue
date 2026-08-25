@@ -160,6 +160,17 @@ const getSliderImages = (project) => {
 }
 
 const fetchProjects = async () => {
+  if (window.__projectsCache && window.__categoriesCache) {
+    categories.value = window.__categoriesCache;
+    projects.value = window.__projectsCache;
+    setTimeout(() => {
+      startGlobalSlider();
+      const elements = document.querySelectorAll('.projects-grid .fade-in');
+      elements.forEach(el => el.classList.add('visible'));
+    }, 50);
+    return;
+  }
+  
   try {
     const [projRes, catRes] = await Promise.all([
       api.get('/Projects'),
@@ -170,6 +181,9 @@ const fetchProjects = async () => {
       return p;
     });
     categories.value = catRes.data;
+    
+    window.__projectsCache = projects.value;
+    window.__categoriesCache = categories.value;
     
     // Veriler yüklendikten sonra slider döngüsünü başlat
     setTimeout(() => {

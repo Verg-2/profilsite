@@ -38,7 +38,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401 && !originalRequest._retry && token) {
       originalRequest._retry = true;
       try {
-        const refreshUrl = (import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api') + '/auth/refresh';
+        const refreshUrl = (import.meta.env.VITE_API_URL || 'https://kadir-api-a4eeeaeygvdxage6.canadaeast-01.azurewebsites.net/api') + '/auth/refresh';
         const res = await axios.post(refreshUrl, {}, { 
           withCredentials: true,
           headers: { Authorization: `Bearer ${token}` }

@@ -223,7 +223,15 @@ app.Use(async (context, next) =>
 
 app.UseResponseCompression();
 app.UseCors("VueCorsPolicy");
-app.UseStaticFiles(); // Added to serve uploaded images from wwwroot
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // 1 YILLIK ZORUNLU ÖNBELLEK: Azure Free Tier hız limitlerini (bandwidth throttle) aşmak için
+        // tarayıcıya bu dosyayı (resim/video) bir daha asla sunucudan istememesini, direkt RAM'den okumasını emreder.
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
+    }
+}); // Added to serve uploaded images from wwwroot with extreme caching
 app.UseRateLimiter();
 
 app.UseAuthentication();

@@ -29,7 +29,7 @@
           v-else 
           :src="getFullUrl(activeVideoUrl)" 
           autoplay muted loop playsinline 
-          preload="none"
+          preload="metadata"
           poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           class="hero-video blurred-bg"
           :aria-label="projectData.videoAriaLabel || projectData.title + ' Tanıtım Videosu'"
@@ -51,7 +51,7 @@
           muted 
           loop 
           playsinline 
-          preload="none"
+          preload="metadata"
           poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           class="hero-video"
           :aria-label="projectData.videoAriaLabel || projectData.title + ' Tanıtım Videosu'"

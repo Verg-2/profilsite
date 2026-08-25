@@ -61,26 +61,15 @@ namespace KadirPortfolio.Api.Controllers
             
             await _authService.TrackDeviceAsync(user, deviceHash, ipAddress);
 
-            // 5. Setup or Require TOTP 2FA
-            if (!user.IsTwoFactorEnabled)
-            {
-                var setupInfo = await _authService.Generate2FaSetupAsync(user);
-                await _auditLogger.LogAsync("LOGIN_2FA_SETUP", $"2FA setup initiated for {request.Email}", ipAddress, userAgent, user.Email);
-                
-                return Ok(new { 
-                    success = true, 
-                    require2Fa = true, 
-                    setup2FaRequired = true,
-                    qrCode = setupInfo.QrCodeImageUrl,
-                    setupKey = setupInfo.ManualEntryKey,
-                    message = "Lütfen Google Authenticator ile QR kodu okutun." 
-                });
-            }
-            else
-            {
-                await _auditLogger.LogAsync("LOGIN_2FA_REQUIRED", $"2FA required for {request.Email}", ipAddress, userAgent, user.Email);
-                return Ok(new { success = true, require2Fa = true, setup2FaRequired = false, message = "Lütfen Authenticator uygulamanızdaki 6 haneli kodu girin." });
-            }
+            // 5. Send 2FA Code via Email
+            await _authService.Send2FaCodeAsync(user);
+            await _auditLogger.LogAsync("LOGIN_2FA_REQUIRED", $"2FA code sent via email to {request.Email}", ipAddress, userAgent, user.Email);
+            
+            return Ok(new { 
+                success = true, 
+                require2Fa = true, 
+                message = "Lütfen e-posta adresinize gönderilen 6 haneli doğrulama kodunu girin." 
+            });
         }
 
         [HttpPost("verify-2fa")]

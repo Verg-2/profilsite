@@ -10,7 +10,7 @@ namespace KadirPortfolio.Api.Services
         Task SaveRefreshTokenAsync(AdminUser user, string refreshToken, DateTime expiryTime);
         Task<AdminUser?> GetUserByEmailAsync(string email);
         Task<AdminUser?> ValidateRefreshTokenAsync(int userId, string refreshToken);
-        Task<(string QrCodeImageUrl, string ManualEntryKey)> Generate2FaSetupAsync(AdminUser user);
+        Task Send2FaCodeAsync(AdminUser user);
         Task<bool> Verify2FaCodeAsync(string email, string code);
         Task TrackDeviceAsync(AdminUser user, string deviceHash, string ipAddress);
     }

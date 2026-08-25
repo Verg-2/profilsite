@@ -75,21 +75,14 @@
       <div v-else class="fade-in">
         <div class="brand" style="margin-bottom: 15px;">
           <div class="brand-icon">
-            <i class="ph ph-shield-check" style="color: #fff; font-size: 24px;"></i>
+            <i class="ph ph-envelope-open" style="color: #fff; font-size: 24px;"></i>
           </div>
         </div>
         
-        <h1 class="title" style="margin-bottom: 10px;">{{ setup2FaRequired ? '2FA Kurulumu' : 'Güvenlik Onayı' }}</h1>
+        <h1 class="title" style="margin-bottom: 10px;">Güvenlik Onayı</h1>
         
-        <div v-if="setup2FaRequired" class="setup-container">
-          <p style="text-align: center; color: #9CA3AF; margin-bottom: 15px; font-size: 14px;">Google Authenticator uygulamasını indirin ve aşağıdaki QR kodu okutun.</p>
-          <div class="qr-code-box">
-            <img :src="qrCode" alt="QR Code" v-if="qrCode" />
-          </div>
-          <p style="text-align: center; color: #6B7280; font-size: 12px; margin-bottom: 20px;">Manuel Kod: <strong>{{ setupKey }}</strong></p>
-        </div>
-        <div v-else>
-          <p style="text-align: center; color: #9CA3AF; margin-bottom: 25px; font-size: 14px;">Google Authenticator uygulamanızdaki 6 haneli kodu girin.</p>
+        <div>
+          <p style="text-align: center; color: #9CA3AF; margin-bottom: 25px; font-size: 14px;">E-posta adresinize gönderilen 6 haneli doğrulama kodunu girin.</p>
         </div>
 
         <form @submit.prevent="handle2Fa" class="form">
@@ -138,9 +131,6 @@ const isLoading = ref(false);
 const isVerifying = ref(false);
 const error = ref('');
 const require2Fa = ref(false);
-const setup2FaRequired = ref(false);
-const qrCode = ref('');
-const setupKey = ref('');
 const isCaptchaChecked = ref(false);
 const focusedField = ref(null);
 const showPassword = ref(false);
@@ -183,9 +173,6 @@ onMounted(() => {
 const otpRefs = ref([]);
 const otpString = computed(() => form.otp.join(''));
 
-// Google Authenticator için timer gerekmiyor.
-
-
 const focusNext = (index, event) => {
   if (event.target.value && index < 5) {
     nextTick(() => {
@@ -216,13 +203,6 @@ const handleLogin = async () => {
     if (response.data.success) {
       if (response.data.require2Fa) {
         require2Fa.value = true;
-        if (response.data.setup2FaRequired) {
-          setup2FaRequired.value = true;
-          qrCode.value = response.data.qrCode;
-          setupKey.value = response.data.setupKey;
-        } else {
-          setup2FaRequired.value = false;
-        }
       } else if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('rememberMe', form.rememberMe);

@@ -104,19 +104,11 @@ namespace KadirPortfolio.Api.Services
             return await _context.AdminUsers.FirstOrDefaultAsync(u => u.Id == userId && u.RefreshToken == hashedInputToken && u.RefreshTokenExpiryTime > DateTime.UtcNow);
         }
 
-        public async Task<(string QrCodeImageUrl, string ManualEntryKey)> Generate2FaSetupAsync(AdminUser user)
+        public async Task Send2FaCodeAsync(AdminUser user)
         {
-            if (string.IsNullOrEmpty(user.TwoFactorSecret))
-            {
-                user.TwoFactorSecret = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
-                _context.AdminUsers.Update(user);
-                await _context.SaveChangesAsync();
-            }
-
-            var tfa = new Google.Authenticator.TwoFactorAuthenticator();
-            var setupInfo = tfa.GenerateSetupCode("Kadir Portfolio", user.Email, user.TwoFactorSecret, false, 3);
-            
-            return (setupInfo.QrCodeSetupImageUrl, setupInfo.ManualEntryKey);
+            var code = new Random().Next(100000, 999999).ToString();
+            _cache.Set($"2FA_{user.Email}", code, TimeSpan.FromMinutes(5));
+            await _emailService.SendEmailAsync(user.Email, "Yönetim Paneli Giriş Doğrulama Kodu", $"Sisteme giriş yapmak için doğrulama kodunuz: {code}\n\nBu kod 5 dakika boyunca geçerlidir.");
         }
 
         private static readonly object _2faLock = new object();
@@ -135,28 +127,17 @@ namespace KadirPortfolio.Api.Services
                 _cache.Set(attemptsKey, attempts + 1, TimeSpan.FromMinutes(5));
             }
 
-            var user = await GetUserByEmailAsync(email);
-            if (user == null || string.IsNullOrEmpty(user.TwoFactorSecret)) return false;
-
-            var tfa = new Google.Authenticator.TwoFactorAuthenticator();
-            bool isValid = tfa.ValidateTwoFactorPIN(user.TwoFactorSecret, code);
-
-            if (isValid)
+            if (_cache.TryGetValue($"2FA_{email}", out string? expectedCode) && expectedCode == code)
             {
                 lock (_2faLock)
                 {
                     _cache.Remove(attemptsKey);
+                    _cache.Remove($"2FA_{email}");
                 }
-
-                if (!user.IsTwoFactorEnabled)
-                {
-                    user.IsTwoFactorEnabled = true;
-                    _context.AdminUsers.Update(user);
-                    await _context.SaveChangesAsync();
-                }
+                return true;
             }
 
-            return isValid;
+            return false;
         }
 
         public async Task TrackDeviceAsync(AdminUser user, string deviceHash, string ipAddress)

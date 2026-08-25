@@ -17,9 +17,9 @@ namespace KadirPortfolio.Api.Controllers
             _context = context;
         }
 
-        // GET: api/SeoSettings/{route}
-        [HttpGet("{*route}", Order = 1)]
-        public async Task<ActionResult<SeoSetting>> GetSeoSetting(string route)
+        // GET: api/SeoSettings/page?route=/contact
+        [HttpGet("page")]
+        public async Task<ActionResult<SeoSetting>> GetSeoSetting([FromQuery] string route)
         {
             if (string.Equals(route, "GetAll", StringComparison.OrdinalIgnoreCase))
                 return BadRequest("Invalid route parameter.");
@@ -81,10 +81,10 @@ namespace KadirPortfolio.Api.Controllers
             return Ok(new { success = true, message = "SEO/GEO ayarları başarıyla kaydedildi." });
         }
 
-        // DELETE: api/SeoSettings/{route}
+        // DELETE: api/SeoSettings/page?route=/contact
         [Authorize]
-        [HttpDelete("{*route}")]
-        public async Task<IActionResult> DeleteSeoSetting(string route)
+        [HttpDelete("page")]
+        public async Task<IActionResult> DeleteSeoSetting([FromQuery] string route)
         {
             route = Uri.UnescapeDataString(route);
             if (!route.StartsWith("/")) route = "/" + route;

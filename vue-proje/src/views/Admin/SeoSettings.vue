@@ -267,7 +267,7 @@ const fetchSettings = async () => {
   isLoading.value = true
   try {
     const path = encodeURIComponent(selectedRoute.value)
-    const res = await api.get(`/SeoSettings/${path}`)
+    const res = await api.get(`/SeoSettings/page?route=${path}`)
     
     // Hem C# PascalCase hem JS camelCase destekle
     const data = res.data && (res.data.id || res.data.Id) ? res.data : null;
@@ -382,7 +382,7 @@ const deleteSavedSetting = async (route) => {
   if (!confirm(`${route} rotası için SEO ayarını silmek istediğinize emin misiniz?`)) return;
   try {
     const path = encodeURIComponent(route);
-    await api.delete(`/SeoSettings/${path}`);
+    await api.delete(`/SeoSettings/page?route=${path}`);
     showToast('Ayar başarıyla silindi!');
     await loadSavedSettings();
     if (selectedRoute.value === route) {

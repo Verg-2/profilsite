@@ -51,8 +51,8 @@ router.beforeEach(async (to, from, next) => {
     try {
       // Lazy import axios or use fetch to avoid circular dependency with api.js
       const path = encodeURIComponent(to.path);
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api';
-      const res = await fetch(`${apiUrl}/SeoSettings/${path}`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://kadir-api-a4eeeaeygvdxage6.canadaeast-01.azurewebsites.net/api';
+      const res = await fetch(`${apiUrl}/SeoSettings/page?route=${path}`);
       if (res.ok) {
         const seoData = await res.json();
         if (seoData && seoData.seoTitle) {
@@ -125,7 +125,7 @@ router.beforeEach(async (to, from, next) => {
         
         const isProjectRoute = to.path.startsWith('/proje/');
         try {
-           const apiUrl = import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api';
+           const apiUrl = import.meta.env.VITE_API_URL || 'https://kadir-api-a4eeeaeygvdxage6.canadaeast-01.azurewebsites.net/api';
            const aboutRes = await fetch(`${apiUrl}/AboutSettings`);
            if (aboutRes.ok) {
              const aboutData = await aboutRes.json();

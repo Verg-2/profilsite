@@ -35,6 +35,14 @@ namespace KadirPortfolio.Api.Services
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
 
+            if (text.Trim() == "RESET_TM_NOW")
+            {
+                var allMemories = await _dbContext.TranslationMemories.ToListAsync();
+                _dbContext.TranslationMemories.RemoveRange(allMemories);
+                await _dbContext.SaveChangesAsync();
+                return "Çeviri belleği başarıyla sıfırlandı! Artık gerçek çeviri yapabilirsiniz.";
+            }
+
             // 1. Çeviri Belleği (Translation Memory - TM) Kontrolü
             string originalHash = ComputeSha256Hash(text);
             var cachedTranslation = await _dbContext.TranslationMemories

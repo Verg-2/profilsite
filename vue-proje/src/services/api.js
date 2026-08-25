@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://kadir-api.azurewebsites.net/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://kadir-api-a4eeeaeygvdxage6.canadaeast-01.azurewebsites.net/api',
   headers: {
     'Content-Type': 'application/json'
   },

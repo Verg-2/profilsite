@@ -408,8 +408,9 @@ TASK: Verify if perfect. Reply PERFECT, or return the ENTIRE corrected translati
                 {
                     actualKey = _encryptionService.Decrypt(apiKeyConfig.KeyValue, apiKeyConfig.IV);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    finalResult = $"[Çeviri Hatası: Şifre Çözme Hatası ({apiKeyConfig.Alias}): {ex.Message}]";
                     continue; // Skip if decryption fails
                 }
 

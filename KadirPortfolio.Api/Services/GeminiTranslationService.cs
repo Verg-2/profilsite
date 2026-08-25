@@ -519,7 +519,7 @@ TASK: Verify if perfect. Reply PERFECT, or return the ENTIRE corrected translati
 
         private async Task<(string Text, int Tokens)> ExecuteGeminiRequest(string apiKey, string systemInstruction, string userMessage)
         {
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={apiKey}";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={apiKey}";
 
             var requestBody = new
             {

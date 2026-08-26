@@ -89,6 +89,7 @@ const isMenuOpen = ref(false)
 const theme = ref(localStorage.getItem('theme') || 'dark')
 const lang = ref(localStorage.getItem('lang') || 'tr')
 provide('lang', lang)
+provide('theme', theme)
 
 const toggleLang = () => {
   lang.value = lang.value === 'tr' ? 'en' : 'tr'

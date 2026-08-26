@@ -9,18 +9,20 @@
 
     <main class="content-container">
       <div class="profile-card fade-in" v-if="settings">
-        <div class="profile-image" :class="{'no-frame': homeSettings?.model3DUrl}" :style="homeSettings?.model3DUrl ? 'border: none; box-shadow: none; background: transparent; overflow: visible;' : ''" ref="tiltRef">
+        <div class="profile-image" :class="{'no-frame': activeModel3DUrl}" :style="activeModel3DUrl ? 'border: none; box-shadow: none; background: transparent; overflow: visible;' : ''" ref="tiltRef">
           <model-viewer 
-            v-if="homeSettings?.model3DUrl"
-            :src="getFullUrl(homeSettings.model3DUrl)" 
+            v-if="activeModel3DUrl"
+            :src="getFullUrl(activeModel3DUrl)" 
             autoplay
             animation-name="Wave"
             :camera-orbit="cameraOrbit"
             shadow-intensity="1" 
             environment-image="neutral"
             class="profile-img"
-            style="outline: none; background: transparent; min-height: 550px; width: 100%; pointer-events: none; transform: translateY(-40px);"
-          ></model-viewer>
+            style="outline: none; background: transparent; min-height: 200px; width: 100%; pointer-events: none;"
+          >
+            <div slot="progress-bar"></div>
+          </model-viewer>
           <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" />
         </div>
         <div class="profile-info" style="position: relative;">
@@ -76,14 +78,23 @@ import api from '@/services/api'
 import defaultImg from '@/assets/img/wolff.png'
 
 const lang = inject('lang', ref('tr'))
+const theme = inject('theme', ref('dark'))
 
 const tiltRef = ref(null)
 const settings = ref(null)
 const homeSettings = ref(null)
 const cameraOrbit = ref('0deg 85deg 75%')
 
+const activeModel3DUrl = computed(() => {
+  if (!homeSettings.value) return null;
+  if (theme.value === 'light' && homeSettings.value.model3DUrlLight) {
+    return homeSettings.value.model3DUrlLight;
+  }
+  return homeSettings.value.model3DUrl;
+});
+
 const handleModelTracking = (e) => {
-  if (!homeSettings.value?.model3DUrl) return;
+  if (!activeModel3DUrl.value) return;
   const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
   const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
   const degX = -mouseX * 45;

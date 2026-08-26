@@ -15,7 +15,9 @@
           shadow-intensity="1" 
           environment-image="neutral"
           style="width: 100%; height: 100%; outline: none; background: transparent; pointer-events: none;"
-        ></model-viewer>
+        >
+          <div slot="progress-bar"></div>
+        </model-viewer>
       </div>
 
       <!-- EĞER VİDEO VARSA VİDEOYU GÖSTER -->

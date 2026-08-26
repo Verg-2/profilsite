@@ -12,6 +12,7 @@ namespace KadirPortfolio.Api.Models
         public string? HeroSubtitleEn { get; set; }
         public string ProfileImageUrl { get; set; } = string.Empty;
         public string? Model3DUrl { get; set; }
+        public string? Model3DUrlLight { get; set; }
         public string PreTitle { get; set; } = string.Empty;
         public string? PreTitleEn { get; set; }
         public string ButtonText { get; set; } = string.Empty;

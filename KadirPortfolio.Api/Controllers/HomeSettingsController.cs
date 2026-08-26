@@ -56,6 +56,7 @@ namespace KadirPortfolio.Api.Controllers
                 existing.LightCursor = homeSetting.LightCursor;
                 existing.DarkCursor = homeSetting.DarkCursor;
                 existing.Model3DUrl = homeSetting.Model3DUrl;
+                existing.Model3DUrlLight = homeSetting.Model3DUrlLight;
                 _context.HomeSettings.Update(existing);
             }
 

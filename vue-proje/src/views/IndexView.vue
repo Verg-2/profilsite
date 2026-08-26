@@ -22,10 +22,10 @@
           </div>
         </div>
         <div class="hero-image" v-if="settings">
-          <div class="image-frame" :class="{'no-frame': settings.model3DUrl}" :style="settings.model3DUrl ? 'border: none; box-shadow: none; background: transparent; overflow: visible;' : ''" ref="tiltRef">
+          <div class="image-frame" :class="{'no-frame': activeModel3DUrl}" :style="activeModel3DUrl ? 'border: none; box-shadow: none; background: transparent; overflow: visible;' : ''" ref="tiltRef">
             <model-viewer 
-              v-if="settings.model3DUrl"
-              :src="getFullUrl(settings.model3DUrl)" 
+              v-if="activeModel3DUrl"
+              :src="getFullUrl(activeModel3DUrl)" 
               autoplay
               animation-name="Wave"
               :camera-orbit="cameraOrbit"
@@ -33,10 +33,12 @@
               environment-image="neutral"
               class="profile-img"
               id="profile-model"
-              style="outline: none; background: transparent; min-height: 550px; width: 100%; pointer-events: none; transform: translateY(-40px);"
-            ></model-viewer>
+              style="outline: none; background: transparent; min-height: 200px; width: 100%; pointer-events: none;"
+            >
+              <div slot="progress-bar"></div>
+            </model-viewer>
             <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
-            <div class="image-glow" id="image-glow" v-if="!settings.model3DUrl"></div>
+            <div class="image-glow" id="image-glow" v-if="!activeModel3DUrl"></div>
           </div>
         </div>
     </div>
@@ -51,6 +53,7 @@ import defaultImg from '@/assets/img/wolff.png'
 import { initPageAnimations, cleanupPageAnimations } from '@/assets/js/page-animations'
 
 const lang = inject('lang', ref('tr'))
+const theme = inject('theme', ref('dark'))
 
 // Fire canvas ref for animations.js
 const fireCanvas = ref(null)
@@ -59,7 +62,7 @@ const settings = ref(null)
 const cameraOrbit = ref('0deg 85deg 75%')
 
 const handleModelTracking = (e) => {
-  if (!settings.value?.model3DUrl) return;
+  if (!activeModel3DUrl.value) return;
   
   // Calculate relative mouse position (-1 to 1)
   const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
@@ -78,6 +81,14 @@ const heroTitle = computed(() => lang.value === 'en' && settings.value?.heroTitl
 const heroSubtitle = computed(() => lang.value === 'en' && settings.value?.heroSubtitleEn ? settings.value.heroSubtitleEn : settings.value?.heroSubtitle)
 const buttonText = computed(() => lang.value === 'en' && settings.value?.buttonTextEn ? settings.value.buttonTextEn : settings.value?.buttonText)
 const secondaryButtonText = computed(() => lang.value === 'en' && settings.value?.secondaryButtonTextEn ? settings.value.secondaryButtonTextEn : settings.value?.secondaryButtonText)
+
+const activeModel3DUrl = computed(() => {
+  if (!settings.value) return null;
+  if (theme.value === 'light' && settings.value.model3DUrlLight) {
+    return settings.value.model3DUrlLight;
+  }
+  return settings.value.model3DUrl;
+});
 
 const getFullUrl = (url) => {
   if (!url) return ''

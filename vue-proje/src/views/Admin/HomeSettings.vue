@@ -80,7 +80,10 @@
 
         <div class="admin-grid-2-col" style="margin-top: 1.5rem;">
           <ImageUploader v-model="form.profileImageUrl" label="Profil Görseli (Kahraman Alanı)" />
-          <FileUploader v-model="form.model3DUrl" accept=".glb,.gltf" label="3D Karakter / Model (.glb)" />
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <FileUploader v-model="form.model3DUrl" accept=".glb,.gltf" label="3D Karakter / Model (Karanlık Tema)" />
+            <FileUploader v-model="form.model3DUrlLight" accept=".glb,.gltf" label="3D Karakter / Model (Açık Tema)" />
+          </div>
         </div>
 
         <div class="admin-grid-2-col">
@@ -168,6 +171,7 @@ const form = ref({
   heroSubtitleEn: '',
   profileImageUrl: '',
   model3DUrl: '',
+  model3DUrlLight: '',
   preTitle: '',
   preTitleEn: '',
   buttonText: '',

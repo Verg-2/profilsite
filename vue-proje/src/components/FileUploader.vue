@@ -24,8 +24,11 @@
           <span class="file-name">{{ getFileName(previewUrl) }}</span>
         </div>
         <div class="preview-overlay">
-          <i class="fas fa-upload"></i>
-          <span>Değiştir</span>
+          <i class="fas fa-upload" @click.stop="triggerFileInput"></i>
+          <span @click.stop="triggerFileInput">Değiştir</span>
+          <button type="button" class="btn btn-danger clear-btn" @click.stop="clearFile" style="margin-top: 10px; padding: 5px 15px; font-size: 0.9rem;">
+            <i class="fas fa-trash"></i> Temizle
+          </button>
         </div>
       </div>
       <div v-else class="placeholder">
@@ -78,6 +81,11 @@ watch(() => props.modelValue, (newVal) => {
 
 const triggerFileInput = () => {
   fileInput.value.click()
+}
+
+const clearFile = () => {
+  previewUrl.value = ''
+  emit('update:modelValue', '')
 }
 
 const handleDrop = (e) => {

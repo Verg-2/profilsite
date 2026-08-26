@@ -21,8 +21,11 @@
       <div v-if="previewUrl" class="preview-container">
         <img :src="getFullUrl(previewUrl)" alt="Preview" class="image-preview" />
         <div class="preview-overlay">
-          <i class="fas fa-camera"></i>
-          <span>Değiştir</span>
+          <i class="fas fa-camera" @click.stop="triggerFileInput"></i>
+          <span @click.stop="triggerFileInput">Değiştir</span>
+          <button type="button" class="btn btn-danger clear-btn" @click.stop="clearFile" style="margin-top: 10px; padding: 5px 15px; font-size: 0.9rem;">
+            <i class="fas fa-trash"></i> Temizle
+          </button>
         </div>
       </div>
       <div v-else class="placeholder">
@@ -71,6 +74,11 @@ watch(() => props.modelValue, (newVal) => {
 
 const triggerFileInput = () => {
   fileInput.value.click()
+}
+
+const clearFile = () => {
+  previewUrl.value = ''
+  emit('update:modelValue', '')
 }
 
 const handleDrop = (e) => {

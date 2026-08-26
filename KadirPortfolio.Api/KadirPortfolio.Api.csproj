@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Watch Exclude="wwwroot\**\*" />
+    <Watch Remove="wwwroot\**\*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -24,6 +24,16 @@ namespace KadirPortfolio.Api.Controllers
             public string Section { get; set; } = "Genel";
         }
 
+        [AllowAnonymous]
+        [HttpGet("Nuke")]
+        public async Task<IActionResult> NukeMemory([FromServices] KadirPortfolio.Api.Data.AppDbContext dbContext)
+        {
+            var memories = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(dbContext.TranslationMemories);
+            dbContext.TranslationMemories.RemoveRange(memories);
+            await dbContext.SaveChangesAsync();
+            return Ok("Nuked all " + memories.Count + " memories. You can now translate again.");
+        }
+
         [HttpPost("Translate")]
         public async Task<IActionResult> Translate([FromBody] TranslationRequest request)
         {

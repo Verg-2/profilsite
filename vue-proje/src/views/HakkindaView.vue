@@ -19,7 +19,7 @@
             shadow-intensity="1" 
             environment-image="neutral"
             class="profile-img"
-            style="outline: none; background: transparent; min-height: 400px; width: 100%; pointer-events: none;"
+            style="outline: none; background: transparent; min-height: 550px; width: 100%; pointer-events: none; transform: translateY(-40px);"
           ></model-viewer>
           <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" />
         </div>

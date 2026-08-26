@@ -10,6 +10,7 @@
         <model-viewer 
           :src="getFullUrl(activeModelUrl)" 
           auto-rotate 
+          autoplay
           camera-controls 
           shadow-intensity="1" 
           environment-image="neutral"

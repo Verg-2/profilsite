@@ -22,11 +22,12 @@
           </div>
         </div>
         <div class="hero-image" v-if="settings">
-          <div class="image-frame" ref="tiltRef">
+          <div class="image-frame" :class="{'no-frame': settings.model3DUrl}" ref="tiltRef">
             <model-viewer 
               v-if="settings.model3DUrl"
               :src="getFullUrl(settings.model3DUrl)" 
               auto-rotate 
+              autoplay
               camera-controls 
               shadow-intensity="1" 
               environment-image="neutral"
@@ -35,7 +36,7 @@
               style="outline: none; cursor: grab; background: transparent; min-height: 500px; width: 100%;"
             ></model-viewer>
             <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
-            <div class="image-glow" id="image-glow"></div>
+            <div class="image-glow" id="image-glow" v-if="!settings.model3DUrl"></div>
           </div>
         </div>
     </div>
@@ -115,3 +116,10 @@ onBeforeUnmount(() => {
 })
 </script>
 
+<style scoped>
+.image-frame.no-frame {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+</style>

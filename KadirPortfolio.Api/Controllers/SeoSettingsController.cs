@@ -41,7 +41,6 @@ namespace KadirPortfolio.Api.Controllers
 
         // GET: api/SeoSettings/GetAll
         [HttpGet("GetAll", Order = -1)]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<SeoSetting>>> GetAllSeoSettings()
         {
             var settings = await _context.SeoSettings.ToListAsync();
@@ -69,6 +68,7 @@ namespace KadirPortfolio.Api.Controllers
                 existing.GeoDescription = setting.GeoDescription ?? "";
                 existing.GeoDescriptionEn = setting.GeoDescriptionEn ?? "";
                 existing.Lang = setting.Lang ?? "tr";
+                existing.IsVisible = setting.IsVisible;
                 
                 _context.SeoSettings.Update(existing);
             }

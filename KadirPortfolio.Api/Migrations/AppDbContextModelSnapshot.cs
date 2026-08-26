@@ -710,6 +710,9 @@ namespace KadirPortfolio.Api.Migrations
                     b.Property<string>("GeoTitleEn")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Lang")
                         .IsRequired()
                         .HasColumnType("text");

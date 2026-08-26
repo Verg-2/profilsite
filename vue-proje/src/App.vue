@@ -86,6 +86,7 @@ const toggleLang = () => {
 }
 
 const homeSettings = ref(null)
+const seoSettings = ref([])
 
 const emojiToCursor = (emoji) => {
   if (!emoji) return 'auto';
@@ -124,24 +125,38 @@ watch(theme, () => {
 })
 
 // Masaüstü için tam liste
-const desktopLinks = computed(() => [
-  { name: lang.value === 'en' ? 'Home' : 'Anasayfa', path: '/' },
-  { name: lang.value === 'en' ? 'About' : 'Hakkında', path: '/hakkinda' },
-  { name: lang.value === 'en' ? 'Blog' : 'Blog', path: '/blog' },
-  { name: lang.value === 'en' ? 'Skills' : 'Yetenekler', path: '/yetenekler' },
-  { name: lang.value === 'en' ? 'Projects' : 'Projeler', path: '/projects' },
-  { name: lang.value === 'en' ? 'Contact' : 'İletişim', path: '/contact' }
-])
+const desktopLinks = computed(() => {
+  const links = [
+    { name: lang.value === 'en' ? 'Home' : 'Anasayfa', path: '/' },
+    { name: lang.value === 'en' ? 'About' : 'Hakkında', path: '/hakkinda' },
+    { name: lang.value === 'en' ? 'Blog' : 'Blog', path: '/blog' },
+    { name: lang.value === 'en' ? 'Skills' : 'Yetenekler', path: '/yetenekler' },
+    { name: lang.value === 'en' ? 'Projects' : 'Projeler', path: '/projects' },
+    { name: lang.value === 'en' ? 'Contact' : 'İletişim', path: '/contact' }
+  ];
+  return links.filter(link => {
+    const setting = seoSettings.value.find(s => (s.route || s.Route) === link.path);
+    if (setting) return setting.isVisible !== false && setting.IsVisible !== false;
+    return true;
+  });
+})
 
 // Mobil için linkler
-const mobileLinks = computed(() => [
-  { name: lang.value === 'en' ? 'About' : 'Hakkında', path: '/hakkinda', icon: 'ph ph-user' },
-  { name: lang.value === 'en' ? 'Blog' : 'Blog', path: '/blog', icon: 'ph ph-article' },
-  { name: lang.value === 'en' ? 'Skills' : 'Yetenekler', path: '/yetenekler', icon: 'ph ph-lightning' },
-  { name: lang.value === 'en' ? 'Home' : 'Anasayfa', path: '/', icon: 'ph ph-house' }, 
-  { name: lang.value === 'en' ? 'Projects' : 'Projeler', path: '/projects', icon: 'ph ph-code' },
-  { name: lang.value === 'en' ? 'Contact' : 'İletişim', path: '/contact', icon: 'ph ph-envelope-simple' }
-])
+const mobileLinks = computed(() => {
+  const links = [
+    { name: lang.value === 'en' ? 'About' : 'Hakkında', path: '/hakkinda', icon: 'ph ph-user' },
+    { name: lang.value === 'en' ? 'Blog' : 'Blog', path: '/blog', icon: 'ph ph-article' },
+    { name: lang.value === 'en' ? 'Skills' : 'Yetenekler', path: '/yetenekler', icon: 'ph ph-lightning' },
+    { name: lang.value === 'en' ? 'Home' : 'Anasayfa', path: '/', icon: 'ph ph-house' }, 
+    { name: lang.value === 'en' ? 'Projects' : 'Projeler', path: '/projects', icon: 'ph ph-code' },
+    { name: lang.value === 'en' ? 'Contact' : 'İletişim', path: '/contact', icon: 'ph ph-envelope-simple' }
+  ];
+  return links.filter(link => {
+    const setting = seoSettings.value.find(s => (s.route || s.Route) === link.path);
+    if (setting) return setting.isVisible !== false && setting.IsVisible !== false;
+    return true;
+  });
+})
 
 function toggleTheme(event) {
   const switchTheme = () => {
@@ -216,6 +231,15 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error('Home settings yüklenemedi:', err)
+  }
+
+  try {
+    const resSeo = await api.get('/SeoSettings/GetAll')
+    if (resSeo.data) {
+      seoSettings.value = resSeo.data
+    }
+  } catch (err) {
+    console.error('Seo ayarları yüklenemedi:', err)
   }
 
   // Ziyaretçi takibi (Session bazlı, her oturumda 1 kez sayılır)

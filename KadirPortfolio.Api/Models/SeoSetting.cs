@@ -23,5 +23,7 @@ namespace KadirPortfolio.Api.Models
         public string? GeoDescriptionEn { get; set; }
         
         public string Lang { get; set; } = "tr";
+        
+        public bool IsVisible { get; set; } = true;
     }
 }

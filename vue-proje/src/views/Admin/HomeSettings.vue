@@ -78,7 +78,10 @@
           </div>
         </div>
 
-        <ImageUploader v-model="form.profileImageUrl" label="Profil Görseli (Kahraman Alanı)" />
+        <div class="admin-grid-2-col" style="margin-top: 1.5rem;">
+          <ImageUploader v-model="form.profileImageUrl" label="Profil Görseli (Kahraman Alanı)" />
+          <FileUploader v-model="form.model3DUrl" accept=".glb,.gltf" label="3D Karakter / Model (.glb)" />
+        </div>
 
         <div class="admin-grid-2-col">
           <div class="admin-form-group">
@@ -142,6 +145,7 @@ import { ref, onMounted } from 'vue'
 import api from '@/services/api'
 import translationService from '@/services/translationService'
 import ImageUploader from '@/components/ImageUploader.vue'
+import FileUploader from '@/components/FileUploader.vue'
 import IconPicker from '@/components/IconPicker.vue'
 
 const loading = ref(false)
@@ -163,6 +167,7 @@ const form = ref({
   heroSubtitle: '',
   heroSubtitleEn: '',
   profileImageUrl: '',
+  model3DUrl: '',
   preTitle: '',
   preTitleEn: '',
   buttonText: '',

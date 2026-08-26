@@ -80,6 +80,7 @@ watch(() => route.path, async (newPath) => {
       const resSeo = await api.get('/SeoSettings/GetAll')
       if (resSeo.data) {
         seoSettings.value = resSeo.data
+        localStorage.setItem('seoSettings', JSON.stringify(resSeo.data))
       }
     } catch (err) {}
   }
@@ -95,7 +96,7 @@ const toggleLang = () => {
 }
 
 const homeSettings = ref(null)
-const seoSettings = ref([])
+const seoSettings = ref(JSON.parse(localStorage.getItem('seoSettings') || '[]'))
 
 const emojiToCursor = (emoji) => {
   if (!emoji) return 'auto';
@@ -246,6 +247,7 @@ onMounted(async () => {
     const resSeo = await api.get('/SeoSettings/GetAll')
     if (resSeo.data) {
       seoSettings.value = resSeo.data
+      localStorage.setItem('seoSettings', JSON.stringify(resSeo.data))
     }
   } catch (err) {
     console.error('Seo ayarları yüklenemedi:', err)

@@ -111,7 +111,7 @@ const handleLogout = () => {
 
 const clearCache = async () => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://profilsite.onrender.com/api';
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://kadir-api-a4eeeaeygvdxage6.canadaeast-01.azurewebsites.net/api';
     const token = localStorage.getItem('token');
     const res = await fetch(`${apiUrl}/Cache/clear`, { 
       method: 'POST',

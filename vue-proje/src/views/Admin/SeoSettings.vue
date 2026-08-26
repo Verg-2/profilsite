@@ -34,23 +34,6 @@
     </div>
 
     <!-- Forms -->
-    <div v-if="!isLoading" class="admin-card" style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(255, 94, 0, 0.05); border: 1px solid rgba(255,94,0,0.2);">
-      <div>
-        <h3 style="color: var(--admin-heading); margin-bottom: 0.5rem; font-size: 1.1rem;">
-          <i class="fas" :class="form.isVisible ? 'fa-eye' : 'fa-eye-slash'" :style="{color: form.isVisible ? 'var(--admin-success, #2ecc71)' : 'var(--admin-danger, #e74c3c)', marginRight: '0.5rem'}"></i>
-          Sayfa Görünürlüğü (Menüde Göster/Gizle)
-        </h3>
-        <p style="color: var(--admin-text-muted); margin: 0; font-size: 0.95rem;">
-          Bu sayfayı sitedeki navigasyon menülerinden (Mobil ve Masaüstü) tamamen gizlemek için bu ayarı kapatın.
-        </p>
-      </div>
-      
-      <label class="toggle-switch" style="transform: scale(1.2);">
-        <input type="checkbox" v-model="form.isVisible">
-        <span class="slider round"></span>
-      </label>
-    </div>
-
     <div v-if="!isLoading" class="admin-grid-2-col">
       
       <!-- SEO Settings -->
@@ -476,54 +459,6 @@ onMounted(async () => {
 @keyframes slideInRight {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
-}
-
-/* Toggle Switch CSS */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-}
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255,255,255,0.1);
-  border: 1px solid var(--admin-border);
-  transition: .4s;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: var(--admin-text-muted);
-  transition: .4s;
-}
-input:checked + .slider {
-  background-color: var(--admin-primary);
-  border-color: var(--admin-primary);
-}
-input:checked + .slider:before {
-  transform: translateX(20px);
-  background-color: white;
-}
-.slider.round {
-  border-radius: 24px;
-}
-.slider.round:before {
-  border-radius: 50%;
 }
 
 .table-responsive {

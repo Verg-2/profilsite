@@ -2,7 +2,14 @@
   <div class="admin-page fade-in">
     <div class="admin-header">
       <h1 class="admin-title">İletişim & Sosyal Medya Ayarları</h1>
-      <div style="display: flex; gap: 10px;">
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <label class="toggle-switch-inline" style="display:flex; align-items:center; gap:8px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:8px; border:1px solid var(--admin-border);">
+          <span style="color:var(--admin-text-main); font-size:0.9rem; font-weight:500;">Sitede Göster</span>
+          <div class="toggle-switch" style="transform: scale(0.9); margin:0;">
+            <input type="checkbox" v-model="pageVisibility" @change="saveVisibility">
+            <span class="slider round"></span>
+          </div>
+        </label>
         <button @click="showAddModal = true" class="admin-btn admin-btn-primary">
           <i class="fas fa-plus"></i> Yeni Ekle
         </button>
@@ -161,6 +168,9 @@ const aiLoading = ref(false)
 const errorMsg = ref('')
 const saving = ref(false)
 
+const pageVisibility = ref(true)
+const seoData = ref(null)
+
 const showAddModal = ref(false)
 const isEditing = ref(false)
 const currentId = ref(null)
@@ -192,6 +202,16 @@ const loadData = async () => {
   try {
     const res = await api.get('/ContactCards')
     cards.value = res.data || []
+    
+    // SEO
+    try {
+      const seoRes = await api.get('/SeoSettings/page?route=/contact')
+      if (seoRes.data) {
+        seoData.value = seoRes.data
+        pageVisibility.value = seoData.value.isVisible !== false && seoData.value.IsVisible !== false
+      }
+    } catch (e) {}
+
   } catch (err) {
     errorMsg.value = 'Veriler yüklenirken hata oluştu.'
   } finally {
@@ -270,6 +290,19 @@ const saveCard = async () => {
     showToast('Kaydetme işlemi başarısız oldu.', true)
   } finally {
     saving.value = false
+  }
+}
+
+const saveVisibility = async () => {
+  try {
+    if (seoData.value) {
+       seoData.value.isVisible = pageVisibility.value;
+       await api.post('/SeoSettings', seoData.value);
+    } else {
+       await api.post('/SeoSettings', { route: '/contact', isVisible: pageVisibility.value });
+    }
+  } catch (e) {
+    console.error('Görünürlük kaydedilemedi', e)
   }
 }
 

@@ -6,7 +6,14 @@
           <h2 class="admin-title">Projeler Yönetimi</h2>
           <p class="admin-subtitle">Portfolyonuzdaki projeleri ve kategorileri düzenleyin.</p>
         </div>
-        <div style="display: flex; gap: 1rem;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <label class="toggle-switch-inline" style="display:flex; align-items:center; gap:8px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:8px; border:1px solid var(--admin-border);">
+            <span style="color:var(--admin-text-main); font-size:0.9rem; font-weight:500;">Sitede Göster</span>
+            <div class="toggle-switch" style="transform: scale(0.9); margin:0;">
+              <input type="checkbox" v-model="pageVisibility" @change="saveVisibility">
+              <span class="slider round"></span>
+            </div>
+          </label>
           <button @click="openTrash" class="admin-btn" style="background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); border: 1px solid rgba(239, 68, 68, 0.2);">
             <i class="fas fa-trash-restore"></i> Çöp Kutusu
           </button>
@@ -401,6 +408,9 @@ const newCategoryIcon = ref('')
 const mediaTab = ref('general')
 const aiLoading = ref(false)
 
+const pageVisibility = ref(true)
+const seoData = ref(null)
+
 const showTrashModal = ref(false)
 const trashItems = ref([])
 const loadingTrash = ref(false)
@@ -429,6 +439,16 @@ const loadData = async () => {
       p.category = categories.value.find(c => c.id === p.projectCategoryId)
       return p
     })
+    
+    // SEO
+    try {
+      const seoRes = await api.get('/SeoSettings/page?route=/projects')
+      if (seoRes.data) {
+        seoData.value = seoRes.data
+        pageVisibility.value = seoData.value.isVisible !== false && seoData.value.IsVisible !== false
+      }
+    } catch (e) {}
+
   } catch (err) {
     errorMsg.value = 'Veriler yüklenirken bir hata oluştu.'
   } finally {
@@ -782,6 +802,19 @@ const hardDeleteProject = async (id) => {
     } catch (error) {
       alert("Kalıcı silme işlemi başarısız.")
     }
+  }
+}
+
+const saveVisibility = async () => {
+  try {
+    if (seoData.value) {
+       seoData.value.isVisible = pageVisibility.value;
+       await api.post('/SeoSettings', seoData.value);
+    } else {
+       await api.post('/SeoSettings', { route: '/projects', isVisible: pageVisibility.value });
+    }
+  } catch (e) {
+    console.error('Görünürlük kaydedilemedi', e)
   }
 }
 

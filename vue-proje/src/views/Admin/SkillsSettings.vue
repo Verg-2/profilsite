@@ -5,7 +5,14 @@
         <h2 class="admin-title">Yetenekler Yönetimi</h2>
         <p class="admin-subtitle">Yetenek kategorilerini ve altındaki becerileri yönetin.</p>
       </div>
-      <div style="display: flex; gap: 1rem;">
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <label class="toggle-switch-inline" style="display:flex; align-items:center; gap:8px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:8px; border:1px solid var(--admin-border);">
+          <span style="color:var(--admin-text-main); font-size:0.9rem; font-weight:500;">Sitede Göster</span>
+          <div class="toggle-switch" style="transform: scale(0.9); margin:0;">
+            <input type="checkbox" v-model="pageVisibility" @change="saveVisibility">
+            <span class="slider round"></span>
+          </div>
+        </label>
         <button @click="translateWithAI" class="admin-btn admin-btn-ai" :disabled="aiLoading">
           <i class="fas" :class="aiLoading ? 'fa-spinner fa-spin' : 'fa-magic'"></i> 
           {{ aiLoading ? 'Çevriliyor...' : '✨ AI ile Çevir' }}
@@ -173,6 +180,9 @@ const newCat = ref({ title: '', titleEn: '', icon: '' })
 const newSkill = ref({})
 const editingSkill = ref(null)
 
+const pageVisibility = ref(true)
+const seoData = ref(null)
+
 const showTrashModal = ref(false)
 const trashItems = ref([])
 const loadingTrash = ref(false)
@@ -188,6 +198,15 @@ const loadData = async () => {
         newSkill.value[cat.id] = { name: '', nameEn: '', percentage: 80, color: '#ff5500' }
       }
     })
+    
+    // SEO Settings
+    try {
+      const seoRes = await api.get('/SeoSettings/page?route=/yetenekler')
+      if(seoRes.data) {
+        seoData.value = seoRes.data
+        pageVisibility.value = seoData.value.isVisible !== false && seoData.value.IsVisible !== false
+      }
+    } catch (e) {}
   } catch (err) {
     errorMsg.value = 'Veriler yüklenirken hata oluştu.'
   } finally {
@@ -362,6 +381,20 @@ const hardDeleteSkill = async (id) => {
     } catch (error) {
       alert("Kalıcı silme işlemi başarısız.")
     }
+  }
+}
+
+const saveVisibility = async () => {
+  try {
+    if (seoData.value) {
+       seoData.value.isVisible = pageVisibility.value;
+       await api.post('/SeoSettings', seoData.value);
+    } else {
+       await api.post('/SeoSettings', { route: '/yetenekler', isVisible: pageVisibility.value });
+    }
+    // Sadece küçük bir toast mesajı gösterebiliriz veya sessizce kaydedebiliriz.
+  } catch (e) {
+    console.error('Görünürlük kaydedilemedi', e)
   }
 }
 

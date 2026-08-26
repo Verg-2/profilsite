@@ -5,7 +5,14 @@
         <h2 class="admin-title">Hakkında Yönetimi</h2>
         <p class="admin-subtitle">Kişisel bilgilerinizi, biyografinizi ve bilgi kartlarınızı düzenleyin.</p>
       </div>
-      <div style="display: flex; gap: 1rem;">
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <label class="toggle-switch-inline" style="display:flex; align-items:center; gap:8px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:8px; border:1px solid var(--admin-border);">
+          <span style="color:var(--admin-text-main); font-size:0.9rem; font-weight:500;">Sitede Göster</span>
+          <div class="toggle-switch" style="transform: scale(0.9); margin:0;">
+            <input type="checkbox" v-model="pageVisibility">
+            <span class="slider round"></span>
+          </div>
+        </label>
         <button @click="translateWithAI" class="admin-btn admin-btn-ai" :disabled="aiLoading">
           <i class="fas" :class="aiLoading ? 'fa-spinner fa-spin' : 'fa-magic'"></i> 
           {{ aiLoading ? 'Çevriliyor...' : '✨ AI ile Çevir' }}
@@ -246,6 +253,9 @@ const aiLoading = ref(false)
 const errorMsg = ref('')
 const successMsg = ref('')
 
+const pageVisibility = ref(true)
+const seoData = ref(null)
+
 const form = ref({
   id: 0,
   mainTitle: '',
@@ -296,6 +306,16 @@ const loadData = async () => {
     } else {
       errorMsg.value = 'Veriler yüklenirken bir hata oluştu.'
     }
+  }
+  
+  try {
+    const seoRes = await api.get('/SeoSettings/page?route=/hakkinda')
+    if(seoRes.data) {
+      seoData.value = seoRes.data
+      pageVisibility.value = seoData.value.isVisible !== false && seoData.value.IsVisible !== false
+    }
+  } catch (err) {
+    console.error('SEO görünürlük ayarı alınamadı')
   }
 }
 
@@ -506,6 +526,13 @@ const saveData = async () => {
     
     // Güncel veriyi tekrar çek
     await loadData()
+    
+    if (seoData.value) {
+       seoData.value.isVisible = pageVisibility.value;
+       await api.post('/SeoSettings', seoData.value);
+    } else {
+       await api.post('/SeoSettings', { route: '/hakkinda', isVisible: pageVisibility.value });
+    }
 
     successMsg.value = 'Hakkında ayarları başarıyla kaydedildi!'
     setTimeout(() => { successMsg.value = '' }, 3000)

@@ -9,8 +9,19 @@
 
     <main class="content-container">
       <div class="profile-card fade-in" v-if="settings">
-        <div class="profile-image" ref="tiltRef">
-          <img :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" />
+        <div class="profile-image" :class="{'no-frame': homeSettings?.model3DUrl}" :style="homeSettings?.model3DUrl ? 'border: none; box-shadow: none; background: transparent; overflow: visible;' : ''" ref="tiltRef">
+          <model-viewer 
+            v-if="homeSettings?.model3DUrl"
+            :src="getFullUrl(homeSettings.model3DUrl)" 
+            autoplay
+            animation-name="Wave"
+            :camera-orbit="cameraOrbit"
+            shadow-intensity="1" 
+            environment-image="neutral"
+            class="profile-img"
+            style="outline: none; background: transparent; min-height: 400px; width: 100%; pointer-events: none;"
+          ></model-viewer>
+          <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" />
         </div>
         <div class="profile-info" style="position: relative;">
           <!-- Status Badge -->
@@ -68,6 +79,17 @@ const lang = inject('lang', ref('tr'))
 
 const tiltRef = ref(null)
 const settings = ref(null)
+const homeSettings = ref(null)
+const cameraOrbit = ref('0deg 85deg 75%')
+
+const handleModelTracking = (e) => {
+  if (!homeSettings.value?.model3DUrl) return;
+  const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+  const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+  const degX = -mouseX * 45;
+  const degY = 85 - (mouseY * 15);
+  cameraOrbit.value = `${degX}deg ${degY}deg 75%`;
+}
 
 const getFullUrl = (url) => {
   if (!url) return ''
@@ -79,10 +101,17 @@ const fetchSettings = async () => {
   try {
     const res = await api.get('/AboutSettings')
     settings.value = res.data
+
+    try {
+      const homeRes = await api.get('/HomeSettings')
+      homeSettings.value = homeRes.data
+    } catch (e) {
+      console.warn('Home settings (for 3D model) could not be loaded on About page')
+    }
     
     // VanillaTilt init after DOM updates
     nextTick(() => {
-      if (tiltRef.value) {
+      if (tiltRef.value && !homeSettings.value?.model3DUrl) {
         VanillaTilt.init(tiltRef.value, {
           max: 10,
           speed: 400,
@@ -110,9 +139,11 @@ const sortedItems = computed(() => {
 
 onMounted(() => {
   fetchSettings()
+  window.addEventListener('mousemove', handleModelTracking)
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('mousemove', handleModelTracking)
   if (tiltRef.value && tiltRef.value.vanillaTilt) {
     tiltRef.value.vanillaTilt.destroy()
   }

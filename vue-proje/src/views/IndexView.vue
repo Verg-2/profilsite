@@ -33,7 +33,7 @@
               environment-image="neutral"
               class="profile-img"
               id="profile-model"
-              style="outline: none; background: transparent; min-height: 500px; width: 100%; pointer-events: none; transform: scale(1.45);"
+              style="outline: none; background: transparent; min-height: 500px; width: 100%; pointer-events: none;"
             ></model-viewer>
             <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
             <div class="image-glow" id="image-glow" v-if="!settings.model3DUrl"></div>
@@ -56,7 +56,7 @@ const lang = inject('lang', ref('tr'))
 const fireCanvas = ref(null)
 const tiltRef = ref(null)
 const settings = ref(null)
-const cameraOrbit = ref('0deg 85deg auto')
+const cameraOrbit = ref('0deg 85deg 75%')
 
 const handleModelTracking = (e) => {
   if (!settings.value?.model3DUrl) return;
@@ -70,7 +70,7 @@ const handleModelTracking = (e) => {
   // Y axis: base 85 degrees, look up/down by 15 degrees (Inverted to face mouse)
   const degY = 85 - (mouseY * 15);
   
-  cameraOrbit.value = `${degX}deg ${degY}deg auto`;
+  cameraOrbit.value = `${degX}deg ${degY}deg 75%`;
 }
 
 const preTitle = computed(() => lang.value === 'en' && settings.value?.preTitleEn ? settings.value.preTitleEn : settings.value?.preTitle)

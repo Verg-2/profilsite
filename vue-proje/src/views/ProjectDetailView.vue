@@ -11,10 +11,10 @@
           :src="getFullUrl(activeModelUrl)" 
           autoplay
           animation-name="Wave"
-          camera-orbit="0deg 85deg auto"
+          camera-orbit="0deg 85deg 75%"
           shadow-intensity="1" 
           environment-image="neutral"
-          style="width: 100%; height: 100%; outline: none; background: transparent; pointer-events: none; transform: scale(1.45);"
+          style="width: 100%; height: 100%; outline: none; background: transparent; pointer-events: none;"
         ></model-viewer>
       </div>
 

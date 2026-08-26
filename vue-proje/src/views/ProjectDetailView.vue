@@ -9,13 +9,10 @@
       <div v-if="activeModelUrl" class="hero-video-container" style="background: transparent; z-index: 10;">
         <model-viewer 
           :src="getFullUrl(activeModelUrl)" 
-          auto-rotate 
           autoplay
-          camera-controls 
-          orientation="0deg 90deg 0deg"
           shadow-intensity="1" 
           environment-image="neutral"
-          style="width: 100%; height: 100%; outline: none; background: transparent; cursor: grab;"
+          style="width: 100%; height: 100%; outline: none; background: transparent; pointer-events: none;"
         ></model-viewer>
       </div>
 

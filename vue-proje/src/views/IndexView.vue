@@ -22,19 +22,16 @@
           </div>
         </div>
         <div class="hero-image" v-if="settings">
-          <div class="image-frame" :class="{'no-frame': settings.model3DUrl}" ref="tiltRef">
+          <div class="image-frame" :class="{'no-frame': settings.model3DUrl}" :style="settings.model3DUrl ? 'border: none; box-shadow: none; background: transparent;' : ''" ref="tiltRef">
             <model-viewer 
               v-if="settings.model3DUrl"
               :src="getFullUrl(settings.model3DUrl)" 
-              auto-rotate 
               autoplay
-              camera-controls 
-              orientation="0deg 90deg 0deg"
               shadow-intensity="1" 
               environment-image="neutral"
               class="profile-img"
               id="profile-img"
-              style="outline: none; cursor: grab; background: transparent; min-height: 500px; width: 100%;"
+              style="outline: none; background: transparent; min-height: 500px; width: 100%; pointer-events: none;"
             ></model-viewer>
             <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
             <div class="image-glow" id="image-glow" v-if="!settings.model3DUrl"></div>

@@ -6,13 +6,13 @@
     <section class="detail-hero" v-if="(activeImages && activeImages.length > 0 && activeImages[0] !== defaultImg) || activeVideoUrl || activeModelUrl">
       
       <!-- EĞER 3D MODEL VARSA MODELİ GÖSTER -->
-      <div v-if="activeModelUrl" class="hero-video-container" style="background: transparent; z-index: 10;">
+      <div v-if="activeModelUrl" class="hero-video-container" style="background: transparent; z-index: 10; overflow: visible;">
         <model-viewer 
           :src="getFullUrl(activeModelUrl)" 
           autoplay
           shadow-intensity="1" 
           environment-image="neutral"
-          style="width: 100%; height: 100%; outline: none; background: transparent; pointer-events: none;"
+          style="width: 100%; height: 100%; outline: none; background: transparent; pointer-events: none; transform: scale(1.45);"
         ></model-viewer>
       </div>
 

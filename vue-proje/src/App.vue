@@ -72,8 +72,17 @@ import api from '@/services/api'
 const route = useRoute()
 const isAdminRoute = ref(window.location.pathname.startsWith('/admin'))
 
-watch(() => route.path, (newPath) => {
+watch(() => route.path, async (newPath) => {
   isAdminRoute.value = newPath.startsWith('/admin')
+  
+  if (!isAdminRoute.value) {
+    try {
+      const resSeo = await api.get('/SeoSettings/GetAll')
+      if (resSeo.data) {
+        seoSettings.value = resSeo.data
+      }
+    } catch (err) {}
+  }
 })
 const isMenuOpen = ref(false)
 const theme = ref(localStorage.getItem('theme') || 'dark')

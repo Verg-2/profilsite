@@ -9,7 +9,7 @@
         <label class="toggle-switch-inline" style="display:flex; align-items:center; gap:8px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:8px; border:1px solid var(--admin-border);">
           <span style="color:var(--admin-text-main); font-size:0.9rem; font-weight:500;">Sitede Göster</span>
           <div class="toggle-switch" style="transform: scale(0.9); margin:0;">
-            <input type="checkbox" v-model="pageVisibility">
+            <input type="checkbox" v-model="pageVisibility" @change="saveVisibility">
             <span class="slider round"></span>
           </div>
         </label>
@@ -278,6 +278,19 @@ const saveData = async () => {
     errorMsg.value = 'Ayarlar kaydedilirken hata oluştu: ' + (err.response?.data || err.message)
   } finally {
     loading.value = false
+  }
+}
+
+const saveVisibility = async () => {
+  try {
+    if (seoData.value) {
+       seoData.value.isVisible = pageVisibility.value;
+       await api.post('/SeoSettings', seoData.value);
+    } else {
+       await api.post('/SeoSettings', { route: '/', isVisible: pageVisibility.value });
+    }
+  } catch (e) {
+    console.error('Görünürlük kaydedilemedi', e)
   }
 }
 

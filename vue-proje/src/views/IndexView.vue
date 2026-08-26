@@ -32,7 +32,7 @@
               environment-image="neutral"
               class="profile-img"
               id="profile-img"
-              style="outline: none; cursor: grab; background: transparent;"
+              style="outline: none; cursor: grab; background: transparent; min-height: 500px; width: 100%;"
             ></model-viewer>
             <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
             <div class="image-glow" id="image-glow"></div>

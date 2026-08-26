@@ -223,8 +223,13 @@ app.Use(async (context, next) =>
 
 app.UseResponseCompression();
 app.UseCors("VueCorsPolicy");
+var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+provider.Mappings[".glb"] = "model/gltf-binary";
+provider.Mappings[".gltf"] = "model/gltf+json";
+
 app.UseStaticFiles(new StaticFileOptions
 {
+    ContentTypeProvider = provider,
     OnPrepareResponse = ctx =>
     {
         // 1 YILLIK ZORUNLU ÖNBELLEK: Azure Free Tier hız limitlerini (bandwidth throttle) aşmak için

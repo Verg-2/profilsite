@@ -27,6 +27,8 @@
               v-if="settings.model3DUrl"
               :src="getFullUrl(settings.model3DUrl)" 
               autoplay
+              animation-name="Wave"
+              camera-orbit="0deg 85deg auto"
               shadow-intensity="1" 
               environment-image="neutral"
               class="profile-img"

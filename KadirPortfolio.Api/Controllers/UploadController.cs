@@ -105,11 +105,13 @@ namespace KadirPortfolio.Api.Controllers
                     return BadRequest("Geçersiz veya bozuk resim dosyası.");
                 }
             }
-            // 2. Diğer Medya Dosyalarını Doğrulama
             else if (AllowedMediaMimeTypes.ContainsKey(ext))
             {
-                if (file.ContentType != AllowedMediaMimeTypes[ext])
-                    return BadRequest("Geçersiz medya içerik tipi.");
+                var expectedMimeType = AllowedMediaMimeTypes[ext];
+                var isGlbException = ext == ".glb" && (file.ContentType == "application/octet-stream" || file.ContentType == "model/gltf-binary" || string.IsNullOrEmpty(file.ContentType));
+                
+                if (file.ContentType != expectedMimeType && !isGlbException)
+                    return BadRequest($"Geçersiz medya içerik tipi. Beklenen: {expectedMimeType}, Gelen: {file.ContentType}");
 
                 if (!ValidateMediaHeader(file, ext))
                 {

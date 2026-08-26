@@ -127,7 +127,7 @@ const uploadFile = async (file) => {
     }
   } catch (err) {
     console.error("Upload error:", err)
-    errorMsg.value = 'Görsel yüklenirken bir hata oluştu.'
+    errorMsg.value = (err.response?.data) || 'Dosya yüklenirken bir hata oluştu.'
   } finally {
     uploading.value = false
     // Reset file input

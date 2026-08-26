@@ -12,6 +12,7 @@
           auto-rotate 
           autoplay
           camera-controls 
+          orientation="0deg 90deg 0deg"
           shadow-intensity="1" 
           environment-image="neutral"
           style="width: 100%; height: 100%; outline: none; background: transparent; cursor: grab;"

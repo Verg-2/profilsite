@@ -29,6 +29,7 @@
               auto-rotate 
               autoplay
               camera-controls 
+              orientation="0deg 90deg 0deg"
               shadow-intensity="1" 
               environment-image="neutral"
               class="profile-img"
@@ -97,7 +98,7 @@ onMounted(async () => {
   cleanupPageAnimations()
   initPageAnimations()
   
-  if (tiltRef.value) {
+  if (tiltRef.value && !settings.value?.model3DUrl) {
     VanillaTilt.init(tiltRef.value, {
       max: 15,
       speed: 400,

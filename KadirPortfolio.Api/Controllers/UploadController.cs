@@ -108,7 +108,7 @@ namespace KadirPortfolio.Api.Controllers
             else if (AllowedMediaMimeTypes.ContainsKey(ext))
             {
                 var expectedMimeType = AllowedMediaMimeTypes[ext];
-                var isGlbException = ext == ".glb" && (file.ContentType == "application/octet-stream" || file.ContentType == "model/gltf-binary" || string.IsNullOrEmpty(file.ContentType));
+                var isGlbException = ext == ".glb";
                 
                 if (file.ContentType != expectedMimeType && !isGlbException)
                     return BadRequest($"Geçersiz medya içerik tipi. Beklenen: {expectedMimeType}, Gelen: {file.ContentType}");

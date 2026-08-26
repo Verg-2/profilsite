@@ -28,7 +28,7 @@
               :src="getFullUrl(settings.model3DUrl)" 
               autoplay
               animation-name="Wave"
-              camera-orbit="0deg 85deg auto"
+              :camera-orbit="cameraOrbit"
               shadow-intensity="1" 
               environment-image="neutral"
               class="profile-img"
@@ -56,6 +56,22 @@ const lang = inject('lang', ref('tr'))
 const fireCanvas = ref(null)
 const tiltRef = ref(null)
 const settings = ref(null)
+const cameraOrbit = ref('0deg 85deg auto')
+
+const handleModelTracking = (e) => {
+  if (!settings.value?.model3DUrl) return;
+  
+  // Calculate relative mouse position (-1 to 1)
+  const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+  const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+  
+  // X axis: rotate left/right up to 45 degrees (Inverted to face mouse)
+  const degX = -mouseX * 45;
+  // Y axis: base 85 degrees, look up/down by 15 degrees (Inverted to face mouse)
+  const degY = 85 - (mouseY * 15);
+  
+  cameraOrbit.value = `${degX}deg ${degY}deg auto`;
+}
 
 const preTitle = computed(() => lang.value === 'en' && settings.value?.preTitleEn ? settings.value.preTitleEn : settings.value?.preTitle)
 const heroTitle = computed(() => lang.value === 'en' && settings.value?.heroTitleEn ? settings.value.heroTitleEn : settings.value?.heroTitle)
@@ -107,9 +123,13 @@ onMounted(async () => {
       gyroscope: true
     })
   }
+  
+  // Mouse tracking listener
+  window.addEventListener('mousemove', handleModelTracking)
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('mousemove', handleModelTracking)
   if (tiltRef.value && tiltRef.value.vanillaTilt) {
     tiltRef.value.vanillaTilt.destroy()
   }

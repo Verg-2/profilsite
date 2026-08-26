@@ -277,6 +277,10 @@ const saveData = async () => {
        await api.post('/SeoSettings', { route: '/', isVisible: pageVisibility.value });
     }
 
+    // Cache temizle
+    window.__homeSettingsCache = null;
+    localStorage.removeItem('homeSettings');
+
     successMsg.value = 'Anasayfa ayarları başarıyla kaydedildi!'
     setTimeout(() => { successMsg.value = '' }, 3000)
   } catch (err) {

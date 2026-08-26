@@ -55,6 +55,7 @@ namespace KadirPortfolio.Api.Controllers
                 existing.SecondaryButtonUrl = homeSetting.SecondaryButtonUrl;
                 existing.LightCursor = homeSetting.LightCursor;
                 existing.DarkCursor = homeSetting.DarkCursor;
+                existing.Model3DUrl = homeSetting.Model3DUrl;
                 _context.HomeSettings.Update(existing);
             }
 

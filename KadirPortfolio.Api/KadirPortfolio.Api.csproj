@@ -12,9 +12,7 @@
     <Watch Remove="wwwroot\**\*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="web.config" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.2.0" />

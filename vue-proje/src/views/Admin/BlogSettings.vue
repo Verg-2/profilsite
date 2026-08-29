@@ -559,8 +559,12 @@ const saveVisibility = async () => {
     } else {
        await api.post('/SeoSettings', { route: '/blog', isVisible: pageVisibility.value });
     }
+    successMsg.value = 'Görünürlük ayarı kaydedildi.';
+    setTimeout(() => { successMsg.value = '' }, 3000);
   } catch (e) {
-    console.error('Görünürlük kaydedilemedi', e)
+    console.error('Görünürlük kaydedilemedi', e);
+    errorMsg.value = 'Görünürlük kaydedilemedi: ' + (e.response?.data || e.message);
+    setTimeout(() => { errorMsg.value = '' }, 3000);
   }
 }
 

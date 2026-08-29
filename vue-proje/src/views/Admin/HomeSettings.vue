@@ -270,6 +270,10 @@ const saveData = async () => {
     form.value.heroTitleEn += '|' + form.value.professionEn;
   }
   
+  // ASP.NET JSON binding çakışmasını (camelCase vs PascalCase) önlemek için yeni yüklenen linkleri her iki versiyona da eşitle.
+  if (form.value.model3DUrl) form.value.Model3DUrl = form.value.model3DUrl;
+  if (form.value.model3DUrlLight) form.value.Model3DUrlLight = form.value.model3DUrlLight;
+
   try {
     await api.put('/HomeSettings', form.value)
     

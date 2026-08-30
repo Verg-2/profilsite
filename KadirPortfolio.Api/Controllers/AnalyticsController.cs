@@ -70,7 +70,7 @@ namespace KadirPortfolio.Api.Controllers
         }
         
         [HttpPost("log-error")]
-        [Authorize] // Sadece giriş yapmış yetkili istemciler hata logu gönderebilir
+        [AllowAnonymous] // Tüm ziyaretçilerden gelen hataları yakalayabilmek için açık
         public async Task<IActionResult> LogError([FromBody] SystemHealthLog log)
         {
             if (log == null || string.IsNullOrWhiteSpace(log.ErrorType))

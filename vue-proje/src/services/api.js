@@ -29,10 +29,11 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
     
-    // Eğer 401 (Token Süresi Doldu) ise konsola kırmızı hata basma, çünkü aşağıda sessizce yenileyeceğiz
-    if (!error.response || error.response.status !== 401) {
-      console.error('API Error:', error.response ? JSON.stringify(error.response.data) : error.message);
-    }
+    // Eğer 401 (Token Süresi Doldu) ise zaten aşağıda sessizce yenileyeceğiz
+    // Güvenlik: Üretim ortamında konsola hata basmıyoruz
+    // if (!error.response || error.response.status !== 401) {
+    //   console.error('API Error:', error.response ? JSON.stringify(error.response.data) : error.message);
+    // }
     
     // Silent Refresh Mantığı (401 Alındığında)
     if (error.response && error.response.status === 401 && !originalRequest._retry && token) {

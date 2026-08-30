@@ -19,9 +19,34 @@ app.directive('safe-html', {
   }
 });
 
+// Güvenlik: Üretim ortamında tüm konsol çıktılarını kapat ve hataları backend'e gizlice logla
+if (import.meta.env.PROD) {
+  console.log = () => {};
+  console.info = () => {};
+  console.warn = () => {};
+  console.error = () => {};
+  console.debug = () => {};
+
+  window.addEventListener('error', (event) => {
+    api.post('/Analytics/log-error', {
+      errorType: 'WINDOW_ERROR',
+      details: event.message || 'Bilinmeyen Hata'
+    }).catch(() => {});
+  });
+
+  window.addEventListener('unhandledrejection', (event) => {
+    api.post('/Analytics/log-error', {
+      errorType: 'PROMISE_REJECTION',
+      details: event.reason?.message || 'Bilinmeyen Promise Hatası'
+    }).catch(() => {});
+  });
+}
+
 // Global Vue Error Handler - Hataları SystemHealthLogs'a gönder
 app.config.errorHandler = (err, instance, info) => {
-  console.error('Vue Global Error:', err)
+  if (!import.meta.env.PROD) {
+    console.error('Vue Global Error:', err)
+  }
   
   api.post('/Analytics/log-error', {
     errorType: 'VUE_ERROR',

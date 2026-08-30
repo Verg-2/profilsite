@@ -192,5 +192,17 @@ router.afterEach((to) => {
   }
 });
 
+// Eğer Vercel/Sunucu tarafında yeni build alınırsa ve eski JS dosyaları (chunks) silinirse,
+// kullanıcının eski sekmesindeki Vue Router sayfaya geçerken chunk bulamayıp hata verir.
+// Bu hata durumunda sayfayı zorla yenileyerek yeni build dosyalarını almasını sağlıyoruz.
+router.onError((error, to) => {
+  if (
+    error.message.includes('Failed to fetch dynamically imported module') ||
+    error.message.includes('Importing a module script failed')
+  ) {
+    window.location.href = to.fullPath;
+  }
+});
+
 export default router
 

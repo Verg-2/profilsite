@@ -39,14 +39,26 @@ const router = createRouter({
 const seoCache = {};
 let cachedAboutData = null;
 
-// Sadece Auth Guard (Bloklamaz, anında geçiş yapar)
+// Sadece Auth Guard (Bloklamaz, anında geçiş yapar) ve Gizli Sayfa Engellemesi
 router.beforeEach((to, from, next) => {
+  // Admin giriş kontrolü
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem('token');
     if (!token) {
       return next({ name: 'AdminLogin' });
     }
   }
+
+  // Blog sayfası ayarlardan gizlenmişse URL üzerinden girilmesini (ve istek atılmasını) engelle
+  if (to.path.startsWith('/blog') && !to.path.startsWith('/admin')) {
+    const seoSettings = JSON.parse(localStorage.getItem('seoSettings') || '[]');
+    const blogSetting = seoSettings.find(s => (s.route || s.Route) === '/blog');
+    
+    if (blogSetting && (blogSetting.isVisible === false || blogSetting.IsVisible === false)) {
+      return next({ path: '/' }); // Anasayfaya geri yönlendir, böylece API isteği hiç gitmez
+    }
+  }
+
   next();
 });
 

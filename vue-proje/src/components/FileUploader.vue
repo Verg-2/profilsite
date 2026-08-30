@@ -44,6 +44,12 @@
     <div v-if="errorMsg" class="upload-status text-danger">
       <i class="fas fa-exclamation-triangle"></i> {{ errorMsg }}
     </div>
+
+    <!-- Harici URL Girişi (Cloudinary vb. için) -->
+    <div class="external-url-input" style="margin-top: 10px;">
+      <label class="admin-label" style="font-size: 0.85rem; color: var(--admin-text-muted);">Veya Harici Link (Cloudinary vb.) Yapıştırın:</label>
+      <input type="text" v-model="externalUrl" @input="handleUrlInput" class="admin-input" placeholder="https://res.cloudinary.com/..." style="width: 100%; font-size: 0.9rem;" />
+    </div>
   </div>
 </template>
 
@@ -73,11 +79,27 @@ const isDragOver = ref(false)
 const previewUrl = ref(props.modelValue)
 const uploading = ref(false)
 const errorMsg = ref('')
+const externalUrl = ref('')
 
 // Watch for external changes
 watch(() => props.modelValue, (newVal) => {
   previewUrl.value = newVal
-})
+  if (newVal && newVal.startsWith('http')) {
+    externalUrl.value = newVal
+  } else {
+    externalUrl.value = ''
+  }
+}, { immediate: true })
+
+const handleUrlInput = () => {
+  if (externalUrl.value) {
+    previewUrl.value = externalUrl.value
+    emit('update:modelValue', externalUrl.value)
+  } else {
+    previewUrl.value = ''
+    emit('update:modelValue', '')
+  }
+}
 
 const triggerFileInput = () => {
   fileInput.value.click()

@@ -26,7 +26,7 @@
       <div v-for="file in files" :key="file.name" class="media-card admin-glass" @dblclick="selectedFile = file">
         <div class="media-preview">
           <img v-if="file.type === 'image'" :src="getFullUrl(file.url)" :alt="file.name" loading="lazy" />
-          <div v-else-if="file.type === '3d'" class="type-icon 3d-icon">
+          <div v-else-if="file.type === '3d'" class="type-icon icon-3d">
             <i class="fas fa-cube"></i>
           </div>
           <div v-else-if="file.type === 'video'" class="type-icon video-icon">
@@ -238,7 +238,7 @@ onMounted(() => {
   color: var(--admin-text-muted);
 }
 
-.type-icon.3d-icon { color: #8e44ad; }
+.type-icon.icon-3d { color: #8e44ad; }
 .type-icon.video-icon { color: #e74c3c; }
 
 .media-info {

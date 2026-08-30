@@ -80,7 +80,7 @@ import { ref, onMounted, computed, watch, nextTick, onBeforeUnmount, inject } fr
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, EffectCreative } from 'swiper/modules';
 import api from '@/services/api';
-import defaultImg from '@/assets/img/wolff.png';
+const defaultImg = 'https://placehold.co/600x400/222222/FFFFFF?text=Resim+Yok';
 
 const lang = inject('lang', ref('tr'));
 

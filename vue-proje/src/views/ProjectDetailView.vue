@@ -159,7 +159,7 @@ import { useRoute } from 'vue-router';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Autoplay, Pagination, EffectCreative } from 'swiper/modules';
 import api from '@/services/api';
-import defaultImg from '@/assets/img/wolff.png';
+const defaultImg = 'https://placehold.co/1200x600/222222/FFFFFF?text=Resim+Yok';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 

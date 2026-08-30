@@ -75,7 +75,7 @@
 import { onMounted, onBeforeUnmount, ref, computed, nextTick, inject } from 'vue'
 import VanillaTilt from 'vanilla-tilt'
 import api from '@/services/api'
-import defaultImg from '@/assets/img/wolff.png'
+
 
 const lang = inject('lang', ref('tr'))
 const theme = inject('theme', ref('dark'))

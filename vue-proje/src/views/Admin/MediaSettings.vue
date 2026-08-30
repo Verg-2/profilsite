@@ -23,7 +23,7 @@
     </div>
 
     <div v-else class="media-grid">
-      <div v-for="file in files" :key="file.name" class="media-card admin-glass">
+      <div v-for="file in files" :key="file.name" class="media-card admin-glass" @dblclick="selectedFile = file">
         <div class="media-preview">
           <img v-if="file.type === 'image'" :src="getFullUrl(file.url)" :alt="file.name" loading="lazy" />
           <div v-else-if="file.type === '3d'" class="type-icon 3d-icon">
@@ -55,6 +55,36 @@
         </div>
       </div>
     </div>
+
+    <!-- Preview Modal -->
+    <div v-if="selectedFile" class="media-modal-overlay" @click.self="selectedFile = null">
+      <div class="media-modal-content admin-glass">
+        <button class="close-modal-btn" @click="selectedFile = null"><i class="fas fa-times"></i></button>
+        
+        <div class="media-modal-body">
+          <img v-if="selectedFile.type === 'image'" :src="getFullUrl(selectedFile.url)" :alt="selectedFile.name" />
+          <model-viewer 
+            v-else-if="selectedFile.type === '3d'"
+            :src="getFullUrl(selectedFile.url)" 
+            autoplay
+            camera-controls
+            auto-rotate
+            shadow-intensity="1"
+            class="modal-3d-viewer"
+          ></model-viewer>
+          <video v-else-if="selectedFile.type === 'video'" :src="getFullUrl(selectedFile.url)" controls autoplay></video>
+          <div v-else class="unsupported-preview">
+            <i class="fas fa-file"></i>
+            <p>Önizleme desteklenmiyor</p>
+            <a :href="getFullUrl(selectedFile.url)" target="_blank" class="admin-btn admin-btn-primary">Dosyayı Aç</a>
+          </div>
+        </div>
+        <div class="media-modal-footer">
+          <span class="file-name">{{ selectedFile.name }}</span>
+          <span class="file-size">{{ formatBytes(selectedFile.size) }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -65,6 +95,7 @@ import swal from '@/utils/swal'
 
 const files = ref([])
 const loading = ref(true)
+const selectedFile = ref(null)
 
 const getFullUrl = (url) => {
   if (!url) return ''
@@ -176,6 +207,7 @@ onMounted(() => {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
+  cursor: pointer;
 }
 
 .media-card:hover {
@@ -254,5 +286,110 @@ onMounted(() => {
 
 .admin-btn-icon.text-danger:hover {
   color: #ff3300;
+}
+
+/* Modal Styles */
+.media-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.media-modal-content {
+  background: var(--admin-surface);
+  border-radius: var(--admin-radius-lg);
+  border: 1px solid var(--admin-border);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.close-modal-btn:hover {
+  background: #ff3300;
+}
+
+.media-modal-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 400px;
+  padding: 2rem;
+  background: var(--admin-bg);
+}
+
+.media-modal-body img, .media-modal-body video {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: var(--admin-radius-md);
+}
+
+.modal-3d-viewer {
+  width: 100%;
+  height: 70vh;
+  background: transparent;
+  outline: none;
+}
+
+.unsupported-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--admin-text-muted);
+}
+.unsupported-preview i { font-size: 4rem; }
+
+.media-modal-footer {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+
+.media-modal-footer .file-name {
+  font-weight: 600;
+  color: var(--admin-text-main);
+  word-break: break-all;
+}
+
+.media-modal-footer .file-size {
+  color: var(--admin-primary);
+  font-weight: 700;
+  white-space: nowrap;
 }
 </style>

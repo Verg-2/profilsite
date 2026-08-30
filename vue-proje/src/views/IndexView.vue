@@ -26,7 +26,6 @@
             <model-viewer 
               v-if="activeModel3DUrl"
               :src="getFullUrl(activeModel3DUrl)" 
-              :poster="getFullUrl(settings.profileImageUrl) || defaultImg"
               autoplay
               animation-name="Wave"
               :camera-orbit="cameraOrbit"
@@ -38,8 +37,8 @@
             >
               <div slot="progress-bar"></div>
             </model-viewer>
-            <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
-            <div class="image-glow" id="image-glow" v-if="!activeModel3DUrl"></div>
+            <img v-else-if="settings.profileImageUrl" :src="getFullUrl(settings.profileImageUrl)" alt="Profil Fotoğrafı" class="profile-img" id="profile-img" />
+            <div class="image-glow" id="image-glow" v-if="!activeModel3DUrl && settings.profileImageUrl"></div>
           </div>
         </div>
     </div>

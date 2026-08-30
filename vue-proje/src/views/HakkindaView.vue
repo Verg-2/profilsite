@@ -23,7 +23,7 @@
           >
             <div slot="progress-bar"></div>
           </model-viewer>
-          <img v-else :src="getFullUrl(settings.profileImageUrl) || defaultImg" alt="Profil Fotoğrafı" />
+          <img v-else-if="settings.profileImageUrl" :src="getFullUrl(settings.profileImageUrl)" alt="Profil Fotoğrafı" />
         </div>
         <div class="profile-info" style="position: relative;">
           <!-- Status Badge -->

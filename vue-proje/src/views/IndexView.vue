@@ -26,6 +26,7 @@
             <model-viewer 
               v-if="activeModel3DUrl"
               :src="getFullUrl(activeModel3DUrl)" 
+              :poster="getFullUrl(settings.profileImageUrl) || defaultImg"
               autoplay
               animation-name="Wave"
               :camera-orbit="cameraOrbit"

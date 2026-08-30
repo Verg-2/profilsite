@@ -25,6 +25,7 @@ const routes = [
       { path: 'seo', name: 'AdminSeo', component: () => import('../views/Admin/SeoSettings.vue'), meta: { title: 'SEO ve GEO', requiresAuth: true } },
       { path: 'contact', name: 'AdminContact', component: () => import('../views/Admin/ContactSettings.vue'), meta: { title: 'İletişim & Sosyal', requiresAuth: true } },
       { path: 'api-keys', name: 'AdminApiKeys', component: () => import('../views/Admin/ApiSettings.vue'), meta: { title: 'API Yönetimi', requiresAuth: true } },
+      { path: 'media', name: 'AdminMedia', component: () => import('../views/Admin/MediaSettings.vue'), meta: { title: 'Medya Kütüphanesi', requiresAuth: true } },
       { path: 'glossary', name: 'AdminGlossary', component: () => import('../views/Admin/GlossarySettings.vue'), meta: { title: 'Dinamik Sözlük', requiresAuth: true } }
       // Diğer admin sayfaları buraya eklenebilir...
     ]

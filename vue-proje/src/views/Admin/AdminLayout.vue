@@ -46,6 +46,9 @@
         <router-link @click="isMobileMenuOpen = false" to="/admin/glossary" class="admin-nav-link" active-class="active">
           <i class="fas fa-book"></i> <span>Dinamik Sözlük</span>
         </router-link>
+        <router-link @click="isMobileMenuOpen = false" to="/admin/media" class="admin-nav-link" active-class="active">
+          <i class="fas fa-images"></i> <span>Medya Kütüphanesi</span>
+        </router-link>
       </nav>
 
       <div class="admin-sidebar-footer">

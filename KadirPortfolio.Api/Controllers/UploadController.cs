@@ -131,6 +131,33 @@ namespace KadirPortfolio.Api.Controllers
             return Ok(new { url = $"/uploads/{uniqueFileName}" });
         }
 
+        [HttpGet("list")]
+        public IActionResult ListFiles()
+        {
+            var uploadsFolder = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads");
+            if (!Directory.Exists(uploadsFolder)) return Ok(new List<object>());
+
+            var files = Directory.GetFiles(uploadsFolder).Select(f => {
+                var info = new FileInfo(f);
+                var ext = info.Extension.ToLowerInvariant();
+                var type = "other";
+                
+                if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".webp" || ext == ".gif") type = "image";
+                else if (ext == ".mp4" || ext == ".webm") type = "video";
+                else if (ext == ".glb" || ext == ".gltf") type = "3d";
+
+                return new {
+                    name = info.Name,
+                    url = $"/uploads/{info.Name}",
+                    size = info.Length,
+                    created = info.CreationTime,
+                    type = type
+                };
+            }).OrderByDescending(x => x.created).ToList();
+
+            return Ok(files);
+        }
+
         [HttpDelete]
         public IActionResult DeleteImage([FromQuery] string fileUrl)
         {

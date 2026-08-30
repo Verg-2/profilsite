@@ -87,10 +87,10 @@ const cameraOrbit = ref('0deg 85deg 75%')
 
 const activeModel3DUrl = computed(() => {
   if (!homeSettings.value) return null;
-  if (theme.value === 'light' && homeSettings.value.model3DUrlLight) {
-    return homeSettings.value.model3DUrlLight;
+  if (theme.value === 'light') {
+    return homeSettings.value.model3DUrlLight || null;
   }
-  return homeSettings.value.model3DUrl;
+  return homeSettings.value.model3DUrl || null;
 });
 
 const handleModelTracking = (e) => {

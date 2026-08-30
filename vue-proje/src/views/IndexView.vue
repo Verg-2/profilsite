@@ -84,10 +84,10 @@ const secondaryButtonText = computed(() => lang.value === 'en' && settings.value
 
 const activeModel3DUrl = computed(() => {
   if (!settings.value) return null;
-  if (theme.value === 'light' && settings.value.model3DUrlLight) {
-    return settings.value.model3DUrlLight;
+  if (theme.value === 'light') {
+    return settings.value.model3DUrlLight || null;
   }
-  return settings.value.model3DUrl;
+  return settings.value.model3DUrl || null;
 });
 
 const getFullUrl = (url) => {

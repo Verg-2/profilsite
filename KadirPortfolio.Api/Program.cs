@@ -103,6 +103,8 @@ builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddHttpClient<IAiTranslationService, GeminiTranslationService>(client =>
 {
     client.Timeout = TimeSpan.FromMinutes(10); // Yapay zeka büyük kod analizleri 100 saniyeden uzun sürebilir
+    // Google Translate ücretsiz sürümünün 429 hatası vermemesi için sahte tarayıcı (User-Agent) ekliyoruz
+    client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 }).ConfigurePrimaryHttpMessageHandler(() => KadirPortfolio.Api.Services.SafeHttpClientHandler.Create());
 
 builder.Services.AddRateLimiter(options =>

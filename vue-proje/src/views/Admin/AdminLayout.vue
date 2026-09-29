@@ -49,6 +49,9 @@
         <router-link @click="isMobileMenuOpen = false" to="/admin/media" class="admin-nav-link" active-class="active">
           <i class="fas fa-images"></i> <span>Medya Kütüphanesi</span>
         </router-link>
+        <router-link @click="isMobileMenuOpen = false" to="/admin/certificates" class="admin-nav-link" active-class="active">
+          <i class="fas fa-certificate"></i> <span>Sertifikalar</span>
+        </router-link>
       </nav>
 
       <div class="admin-sidebar-footer">

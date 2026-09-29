@@ -53,8 +53,8 @@
       <p style="color:var(--admin-text-muted);">Henüz sisteme eklenmiş bir API anahtarı bulunmuyor.</p>
     </div>
 
-    <div v-else class="admin-card" style="padding: 0; overflow: hidden;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <div v-else class="admin-card" style="padding: 0; overflow-x: auto;">
+      <table style="width: 100%; min-width: 900px; border-collapse: collapse; text-align: left;">
         <thead>
           <tr style="background: var(--admin-surface-hover); border-bottom: 1px solid var(--admin-border);">
             <th style="padding: 1rem; color: var(--admin-text-muted); font-weight: 600;">Durum</th>

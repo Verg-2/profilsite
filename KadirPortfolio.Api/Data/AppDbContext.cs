@@ -26,6 +26,7 @@ namespace KadirPortfolio.Api.Data
         public DbSet<TranslationMemory> TranslationMemories { get; set; }
         public DbSet<ApiKeyConfig> ApiKeyConfigs { get; set; }
         public DbSet<GlossaryItem> GlossaryItems { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
         
         public DbSet<AdminUser> AdminUsers { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }

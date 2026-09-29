@@ -64,15 +64,45 @@
           </template>
         </div>
       </div>
+      
+      
       <div v-else-if="!settings" class="text-center" style="padding: 2rem; color: #888;">
         <p>Hakkımda bilgisi yükleniyor...</p>
       </div>
+
+       <!-- YENİ EKLENEN KODLAR: SERTİFİKALAR BÖLÜMÜ -->
+              <!-- YENİ EKLENEN KODLAR: SERTİFİKALAR BÖLÜMÜ -->
+      <div v-if="certificates.length > 0" class="certificates-section fade-in" style="margin-top: 4rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--text-main); font-size: 2rem;">
+          {{ lang === 'en' ? 'Certificates' : 'Sertifikalarım' }}
+        </h2>
+        
+        <div class="certificates-grid">
+          <!-- Her bir sertifika için bir kart oluşturuyoruz -->
+          <div v-for="cert in certificates" :key="cert.id" class="cert-card">
+            <div class="cert-image-wrapper">
+              <img :src="getFullUrl(cert.imageUrl)" :alt="cert.name" />
+            </div>
+            <div class="cert-content">
+              <!-- Başlık: İngilizceyse ve İngilizce başlık yazılmışsa onu göster, yoksa Türkçeyi -->
+              <h3>{{ (lang === 'en' && cert.nameEn) ? cert.nameEn : cert.name }}</h3>
+              
+              <!-- Tarih -->
+              <span class="cert-date">{{ (lang === 'en' && cert.dateEn) ? cert.dateEn : cert.date }}</span>
+              
+              <!-- Açıklama -->
+              <p>{{ (lang === 'en' && cert.descriptionEn) ? cert.descriptionEn : cert.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref, computed, nextTick, inject } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed, nextTick, inject, onUnmounted } from 'vue';
 import VanillaTilt from 'vanilla-tilt'
 import api from '@/services/api'
 
@@ -84,6 +114,20 @@ const tiltRef = ref(null)
 const settings = ref(null)
 const homeSettings = ref(null)
 const cameraOrbit = ref('0deg 85deg 75%')
+const certificates = ref([])
+
+const fetchCertificates = async () => {
+  try {
+    const response = await api.get('/Certificates')
+    certificates.value = response.data
+  } catch (error) {
+    console.error("Sertifikalar yüklenirken hata oluştu", error); 
+  }
+};
+
+onMounted(() => {
+  fetchCertificates();
+});
 
 const activeModel3DUrl = computed(() => {
   if (!homeSettings.value) return null;
@@ -207,4 +251,70 @@ onBeforeUnmount(() => {
     display: inline-flex;
   }
 }
+/* SERTİFİKA KARTLARI STİLLERİ */
+.certificates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.cert-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.cert-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(255, 77, 0, 0.1);
+  border-color: rgba(255, 77, 0, 0.3);
+}
+
+.cert-image-wrapper {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.cert-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.cert-card:hover .cert-image-wrapper img {
+  transform: scale(1.1);
+}
+
+.cert-content {
+  padding: 1.5rem;
+}
+
+.cert-content h3 {
+  color: var(--text-main);
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.cert-date {
+  display: inline-block;
+  background: rgba(255, 77, 0, 0.1);
+  color: #ff4d00;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.cert-content p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 </style>

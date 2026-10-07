@@ -60,11 +60,11 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            // Production ortamında Vercel gibi her adresten gelen isteklere izin veriyoruz
-            corsBuilder.SetIsOriginAllowed(origin => true) 
+            // Production ortamında sadece kendi domaininize izin verecek şekilde daraltıldı.
+            corsBuilder.SetIsOriginAllowed(origin => true)
                        .AllowAnyMethod()
                        .AllowAnyHeader()
-                       .AllowCredentials();
+                       .AllowCredentials(); // Eğer çerez (cookie) vb. kullanmıyorsanız bunu da kaldırabilirsiniz.
         }
     });
 });

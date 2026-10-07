@@ -24,8 +24,7 @@ namespace KadirPortfolio.Api.Controllers
             public string Section { get; set; } = "Genel";
         }
 
-        [AllowAnonymous]
-        [HttpGet("Nuke")]
+        [HttpDelete("Nuke")]
         public async Task<IActionResult> NukeMemory([FromServices] KadirPortfolio.Api.Data.AppDbContext dbContext)
         {
             var memories = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(dbContext.TranslationMemories);

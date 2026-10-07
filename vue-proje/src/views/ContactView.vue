@@ -150,22 +150,16 @@ async function handleSubmit() {
   state.loading = true
 
   try {
-    const response = await fetch(`${API_BASE}/api/iletisim/gonder`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        Ad: form.ad,
-        Soyad: form.soyad,
-        Email: form.email,
-        Mesaj: form.mesaj,
-        WebSitesi: form.webSitesi
-      })
+    const response = await api.post('/iletisim/gonder', {
+      Ad: form.ad,
+      Soyad: form.soyad,
+      Email: form.email,
+      Mesaj: form.mesaj,
+      WebSitesi: form.webSitesi
     })
 
-    const data = await response.json().catch(() => ({}))
-    if (!response.ok || data.success === false) {
+    const data = response.data
+    if (!data.success) {
       let hataMesaji = data?.mesaj || data?.title || (lang.value === 'en' ? 'Failed to send message.' : 'Mesaj gönderilemedi.')
       let detay = ''
       
@@ -189,7 +183,20 @@ async function handleSubmit() {
     form.mesaj = ''
     form.webSitesi = ''
   } catch (error) {
-    state.errorMessage = lang.value === 'en' ? 'Server unreachable. Please try again later.' : 'Sunucuya ulaşılamadı. Lütfen daha sonra tekrar deneyin.'
+    if (error.response && error.response.data) {
+      const data = error.response.data;
+      let hataMesaji = data?.mesaj || data?.title || (lang.value === 'en' ? 'Failed to send message.' : 'Mesaj gönderilemedi.');
+      let detay = '';
+      if (data?.errors) {
+        const errorList = Object.values(data.errors).flat();
+        detay = ` Detay: ${errorList.join(' ')}`;
+      } else if (Array.isArray(data?.hatalar) && data.hatalar.length) {
+        detay = ` Detay: ${data.hatalar.join(' ')}`;
+      }
+      state.errorMessage = `${hataMesaji}${detay}`;
+    } else {
+      state.errorMessage = lang.value === 'en' ? 'Server unreachable. Please try again later.' : 'Sunucuya ulaşılamadı. Lütfen daha sonra tekrar deneyin.';
+    }
   } finally {
     state.loading = false
   }

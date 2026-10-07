@@ -34,7 +34,7 @@ namespace KadirPortfolio.Api.Controllers
             return Ok(mesajlar);
         }
 
-        [EnableRateLimiting("IletisimLimiti")]
+        [EnableRateLimiting("AuthLimiter")]
         [HttpPost("gonder")]
         [AllowAnonymous]
         public async Task<IActionResult> MesajGonder([FromBody] IletisimMesaji model)

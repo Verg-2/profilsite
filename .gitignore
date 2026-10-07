@@ -24,3 +24,5 @@ backup.sql
 # Database Data
 kadirportfolio_db/
 pg_data/
+
+.fake

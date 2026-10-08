@@ -27,6 +27,7 @@ builder.Configuration["YandexCaptcha:SecretKey"] = Environment.GetEnvironmentVar
 builder.Configuration["EmailSettings:Email"] = Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS") ?? builder.Configuration["EmailSettings:Email"];
 builder.Configuration["EmailSettings:Password"] = Environment.GetEnvironmentVariable("EMAIL_SENDER_PASSWORD") ?? builder.Configuration["EmailSettings:Password"];
 builder.Configuration["Jwt:Key"] = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? builder.Configuration["Jwt:Key"];
+builder.Configuration["Encryption:MasterKey"] = Environment.GetEnvironmentVariable("ENCRYPTION_MASTER_KEY") ?? builder.Configuration["Encryption:MasterKey"];
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -50,22 +51,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("VueCorsPolicy", corsBuilder =>
     {
-        if (builder.Environment.IsDevelopment())
-        {
-            // Geliştirme ortamında (Localhost veya yerel ağ IP'leri ile telefondan test için) her yere açık
-            corsBuilder.SetIsOriginAllowed(origin => true)
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials();
-        }
-        else
-        {
-            // Production ortamında sadece kendi domaininize izin verecek şekilde daraltıldı.
-            corsBuilder.SetIsOriginAllowed(origin => true)
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials(); // Eğer çerez (cookie) vb. kullanmıyorsanız bunu da kaldırabilirsiniz.
-        }
+        corsBuilder.WithOrigins(
+                        "https://kadiraltundag.vercel.app", 
+                        "https://kadiraltundag-verg-2.vercel.app", 
+                        "http://localhost:5173", 
+                        "http://localhost:5174", 
+                        "https://kadir.com"
+                   )
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials(); 
     });
 });
 builder.Services.AddMemoryCache();
